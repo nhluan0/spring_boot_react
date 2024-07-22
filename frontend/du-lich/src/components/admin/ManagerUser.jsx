@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { apiGetAllUserByPage, apiSearchByUserNameOrPhoneNumber } from '../service/UserService'
-import AddUser from './AddUser'
+import { apiGetAllUserByPage, apiPatchById, apiSearchByUserNameOrPhoneNumber } from '../service/UserService'
+import ModalAddOrUpdateUser from './ModalAddOrUpdateUser'
+import { useNavigate } from 'react-router-dom'
 
 function ManagerUser() {
     const [users, setUsers] = useState([])
@@ -12,7 +13,10 @@ function ManagerUser() {
     const [inputSearch, setInputSearch] = useState("")
     // hien thi loi search 
     const [errorSearch, setErrorSearch] = useState("")
+    // show modal update
+    const [modalUpdate, setModalUpdate] = useState(false)
 
+    const navigator = useNavigate()
 
     useEffect(() => {
         if (refeshUser) {
@@ -20,6 +24,7 @@ function ManagerUser() {
         }
 
     }, [refeshUser])
+
     // ham goi api get all user for first load page
     const handleApiGetAllUser = async () => {
 
@@ -65,12 +70,31 @@ function ManagerUser() {
             )
         }
     }
+    // show modal sua
+    const handelShowModalUpdate = (id) => {
+        setModalUpdate(true)
+        navigator(`/users/${id}`)
+    }
+    // xu ly khoa or mo khoa
+    const handleLockOrUnLock = async (id) => {
+
+        await apiPatchById(id).then(response => {
+            console.log(response.data)
+            setRefeshUser(true)
+        }).catch(err => {
+            console.error(err)
+        })
+    }
     return (
         <main className='container-lg'>
-            {showModalAddNewUser &&
-                <AddUser
+            {(showModalAddNewUser || modalUpdate) &&
+                <ModalAddOrUpdateUser
                     setShowModal={setShowModalAddNewUser}
                     setRefeshUser={setRefeshUser}
+                    setModalUpdate={setModalUpdate}
+                    showModalAddNewUser={showModalAddNewUser}
+                    modalUpdate={modalUpdate}
+                    setErrorSearch={setErrorSearch}
                 />}
             <br></br>
             {errorSearch &&
@@ -117,10 +141,17 @@ function ManagerUser() {
                                     {!user.isLock ? <td className='text-success fw-bold'>Hoạt động</td> :
                                         <td className='text-danger fw-bold'>khóa</td>}
                                     <td >
-                                        <button type="button" className="btn btn-primary btn-sm">Sửa</button>
-                                        <button type="button" className="btn btn-info btn-sm mx-1">Xóa</button>
-                                        {!user.isLock ? <button type="button" className="btn btn-success btn-sm ">Khóa</button>
-                                            : <button type="button" className="btn btn-danger btn-sm">Mở</button>}
+                                        <button
+                                            type="button"
+                                            className="btn btn-primary btn-sm mx-1"
+                                            onClick={() => handelShowModalUpdate(user.id)}
+                                        >
+                                            Sửa
+                                        </button>
+
+                                        {!user.isLock ?
+                                            <button onClick={() => handleLockOrUnLock(user.id)} type="button" className="btn btn-success btn-sm ">Khóa</button>
+                                            : <button onClick={() => handleLockOrUnLock(user.id)} type="button" className="btn btn-danger btn-sm">Mở</button>}
 
                                     </td>
                                 </tr>)

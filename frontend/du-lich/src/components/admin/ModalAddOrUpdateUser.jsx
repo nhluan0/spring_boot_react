@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { IoMdClose } from "react-icons/io";
-import { apiAddNewUser } from '../service/UserService';
+import { apiAddNewUser, apiGetById, apiUpdateUserById } from '../service/UserService';
+import { useNavigate, useParams } from 'react-router-dom'
 
-
-const AddUser = ({ setShowModal, setRefeshUser }) => {
+const ModalAddOrUpdateUser = ({ setShowModal, setRefeshUser,
+    setModalUpdate, showModalAddNewUser, modalUpdate, setErrorSearch }) => {
     const [user, setUser] = useState(
         {
             fullName: "",
@@ -26,6 +27,14 @@ const AddUser = ({ setShowModal, setRefeshUser }) => {
 
         }
     )
+    const { id } = useParams()
+    const navigator = useNavigate()
+    useEffect(() => {
+        if (modalUpdate) {
+            handleGetUserById(id)
+        }
+
+    }, [id])
 
     // handle change input
     const handleInputChange = (e) => {
@@ -38,29 +47,83 @@ const AddUser = ({ setShowModal, setRefeshUser }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         // Gọi API để thêm mới người dùng
-        await apiAddNewUser(user)
-            .then((response) => {
-                console.log("Phản hồi từ API:", response);
-                setShowModal(false) // dong modal
-                setRefeshUser(true)
+        if (showModalAddNewUser) {
+            await apiAddNewUser(user)
+                .then((response) => {
+                    console.log("Phản hồi từ API:", response);
+                    setShowModal(false) // dong modal
+                    setRefeshUser(true)
+                    setErrorSearch("Thêm user thanh cong")
+                    setTimeout(() => {
+                        setErrorSearch("")
+
+                    }, 3000)
+
+                })
+                .catch((err) => {
+                    if (err.response && err.response.status === 400) {
+                        const errr = err.response.data;
+                        const resetError = {
+                            fullName: "",
+                            userName: "",
+                            password: "",
+                            email: "",
+                            phoneNumber: "",
+                            address: "",
+                            roles: ""
+                        };
+                        // Cập nhật state  va reset lai error voi gia tri ban dau với lỗi từ API
+                        setError({ ...resetError, ...errr });
+                    }
+                });
+        }
+        if (modalUpdate && id) {
+            await apiUpdateUserById(id, user)
+                .then((response) => {
+                    console.log("Phản hồi từ API:", response.data);
+
+                    setRefeshUser(true)
+                    setModalUpdate(false)
+                    setErrorSearch("Update user thanh cong")
+                    setTimeout(() => {
+                        setErrorSearch("")
+
+                    }, 3000)
+                    navigator("/users")
+                })
+                .catch((err) => {
+                    if (err.response && err.response.status === 400) {
+                        const errr = err.response.data;
+                        const resetError = {
+                            fullName: "",
+                            userName: "",
+                            password: "",
+                            email: "",
+                            phoneNumber: "",
+                            address: "",
+                            roles: ""
+                        };
+                        // Cập nhật state  va reset lai error voi gia tri ban dau với lỗi từ API
+                        setError({ ...resetError, ...errr });
+                    }
+                });
+        }
+
+
+    }
+    async function handleGetUserById(id) {
+        if (id) {
+            await apiGetById(id).then(response => {
+                const userGetted = response.data;
+                console.log(userGetted)
+                setUser({ ...user, ...userGetted })
+                console.log(user)
+            }).catch(err => {
+                console.log(err)
             })
-            .catch((err) => {
-                if (err.response && err.response.status === 400) {
-                    const errr = err.response.data;
-                    const resetError = {
-                        fullName: "",
-                        userName: "",
-                        password: "",
-                        email: "",
-                        phoneNumber: "",
-                        address: "",
-                        roles: ""
-                    };
-                    // Cập nhật state  va reset lai error voi gia tri ban dau với lỗi từ API
-                    setError({ ...resetError, ...errr });
-                }
-            });
-    };
+        }
+    }
+
     return (
         <div className=' modal-background ' >
 
@@ -71,7 +134,11 @@ const AddUser = ({ setShowModal, setRefeshUser }) => {
                         <IoMdClose
                             className='ms-auto m-1 fs-1 x_close'
                             style={{ cursor: "pointer" }}
-                            onClick={() => setShowModal(false)}
+                            onClick={() => {
+                                setShowModal(false)
+                                setModalUpdate(false)
+                                navigator("/users")
+                            }}
                         />
                     </div>
                     <hr></hr>
@@ -184,10 +251,19 @@ const AddUser = ({ setShowModal, setRefeshUser }) => {
                             <button
                                 type='button'
                                 className="btn btn-sm btn-secondary mx-1 "
-                                onClick={() => setShowModal(false)}
+                                onClick={() => {
+                                    setShowModal(false)
+                                    setModalUpdate(false)
+                                    navigator("/users")
+                                }}
                             >Đóng
                             </button>
-                            <button type="submit" onClick={handleSubmit} className="btn btn-sm btn-success ">Thêm</button>
+                            <button type="submit" onClick={handleSubmit} className="btn btn-sm btn-success ">
+                                {showModalAddNewUser && "Thêm"}
+                                {modalUpdate && "Cập Nhật"}
+
+                            </button>
+
                         </div>
                     </form>
 
@@ -200,4 +276,4 @@ const AddUser = ({ setShowModal, setRefeshUser }) => {
     )
 }
 
-export default AddUser
+export default ModalAddOrUpdateUser

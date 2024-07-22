@@ -84,18 +84,34 @@ public class UserSerViceImpl implements UserService {
         if(!user.isPresent()) return false;
         return true;
     }
-
+    // get user by id
+    @Override
+    public User getUserById(Long id) {
+       Optional<User> user = userRepository.findById(id);
+       if(user.isPresent())return user.get();
+        return null;
+    }
 
 
     // update user by id
     @Override
     public UserDto updateUserById(Long id, UserDto userDto) {
-        Boolean checkUserExisted = isUserExistById(id);
-        if(!checkUserExisted) return null;
         userDto.setId(id);
         User savedUser = mapperUserAndUserDto.userDtoToUser(userDto);
         savedUser = userRepository.save(savedUser);
         UserDto userDtoResponse = mapperUserAndUserDto.userToUserDto(savedUser);
         return userDtoResponse;
+    }
+
+    @Override
+    public UserDto lockOrUnLockUser(Long id) {
+        Optional<User> user = userRepository.findById(id);
+        if(!user.isPresent())return null;
+        User user1 = user.get();
+        user1.setIsLock(!user1.getIsLock());
+        // luu vao database
+        User saved = userRepository.save(user1);
+        UserDto userDto = mapperUserAndUserDto.userToUserDto(saved);
+        return userDto;
     }
 }

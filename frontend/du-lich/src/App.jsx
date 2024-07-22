@@ -12,6 +12,8 @@ function App() {
       <Routes>
         {/*http://localhost:5173/users */}
         <Route path='/users' element={<ManagerUser />}></Route>
+        {/*http://localhost:5173/users/id update user */}
+        <Route path='/users/:id' element={<ManagerUser />}></Route>
       </Routes>
 
     </BrowserRouter>

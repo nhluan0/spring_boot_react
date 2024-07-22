@@ -21,6 +21,10 @@ public interface UserService {
     List<UserDto> getListUserByUserNameOrPhoneNumber(String userName,String phoneNumber);
     // check existed user with given id
     Boolean isUserExistById(Long id);
+    User getUserById(Long id);
     // update user existed by id
     UserDto updateUserById(Long id, UserDto userDto);
+    UserDto lockOrUnLockUser(Long id);
+
+
 }

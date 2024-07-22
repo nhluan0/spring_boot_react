@@ -3,6 +3,7 @@ package luan.datve.dulich.controller;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import luan.datve.dulich.dto.UserDto;
+import luan.datve.dulich.mapper.MapperUserAndUserDto;
 import luan.datve.dulich.model.User;
 import luan.datve.dulich.service.UserService;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,8 @@ import java.util.Map;
 @AllArgsConstructor
 public class UserController {
     private UserService userService;
+    private MapperUserAndUserDto mapperUserAndUserDto;
+
 
 
     // build Api add a new user
@@ -64,7 +67,7 @@ public class UserController {
         return ResponseEntity.ok(userPage);
     }
     // build Api search username or phone number
-    @GetMapping("{userNameOrPhoneNumber}")
+    @GetMapping("/{userNameOrPhoneNumber}")
     public ResponseEntity<?> searchByPhoneOrFullName(
             @PathVariable("userNameOrPhoneNumber") String mark){
         List<UserDto> userDtoList = userService.getListUserByUserNameOrPhoneNumber(mark,mark);
@@ -73,14 +76,70 @@ public class UserController {
     }
     // build Api update user existed
     @PutMapping("{id}")
-    public  ResponseEntity<?> updateUserExisted(@PathVariable("id") Long id,
-                                                @Valid @RequestBody UserDto userDto,
-                                                BindingResult bindingResult){
-        Boolean isUserExisted = userService.isUserExistById(id);
-        Boolean isUserExist = userService.isExistUserName(userDto.getUserName());
-        Boolean isEmailExist = userService.isExistEmail(userDto.getEmail());
-        Boolean isPhoneNumberExist = userService.isExistPhoneNumber(userDto.getPhoneNumber());
-        if(bindingResult.hasErrors())
+    public ResponseEntity<?> updateUserExisted(@PathVariable("id") Long id,
+                                               @Valid @RequestBody UserDto userDto,
+                                               BindingResult bindingResult) {
+        User existingUser = userService.getUserById(id);
 
+        if (existingUser == null) {
+            // user not found with the given id
+            return new ResponseEntity<>("User is not existed with given id " + id, HttpStatus.BAD_REQUEST);
+        }
+
+        // Get current user's details
+        String currentPhoneNumber = existingUser.getPhoneNumber();
+        String currentUserName = existingUser.getUserName();
+        String currentEmail = existingUser.getEmail();
+
+        Map<String, String> errors = new HashMap<>();
+
+        // Check for validation errors
+        if (bindingResult.hasErrors()) {
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                errors.put(error.getField(), error.getDefaultMessage());
+            }
+        }
+
+        // Check if the new username, email, or phone number already exists (and is different from the current one)
+        if (!userDto.getUserName().equalsIgnoreCase(currentUserName) && userService.isExistUserName(userDto.getUserName())) {
+            errors.put("userName", "Tài khoản đã tồn tại");
+        }
+
+        if (!userDto.getEmail().equalsIgnoreCase(currentEmail) && userService.isExistEmail(userDto.getEmail())) {
+            errors.put("email", "Email đã tồn tại");
+        }
+
+        if (!userDto.getPhoneNumber().equalsIgnoreCase(currentPhoneNumber) && userService.isExistPhoneNumber(userDto.getPhoneNumber())) {
+            errors.put("phoneNumber", "Số điện thoại đã tồn tại");
+        }
+
+        // If there are any errors, return them
+        if (!errors.isEmpty()) {
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        }
+
+        // No errors, proceed to update the user
+        UserDto updatedUserDto = userService.updateUserById(id, userDto);
+        return ResponseEntity.ok(updatedUserDto);
     }
+    // build Api get user by id
+    @GetMapping("/get/{id}")
+    public ResponseEntity<?> getUserById(@PathVariable("id") Long id) {
+        User user = userService.getUserById(id);
+        if (user == null) {
+            return new ResponseEntity<>("User does not exist with given id: " + id, HttpStatus.BAD_REQUEST);
+        }
+        UserDto userDto = mapperUserAndUserDto.userToUserDto(user); // Assuming you have a mapper to convert User to UserDto
+        return ResponseEntity.ok(userDto);
+    }
+    // build api lock or unlock an account
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> isLockOrUnLock(@PathVariable("id") Long id){
+        UserDto userDto = userService.lockOrUnLockUser(id);
+        if (userDto == null) {
+            return new ResponseEntity<>("User does not exist with given id: " + id, HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok(userDto);
+    }
+
 }
