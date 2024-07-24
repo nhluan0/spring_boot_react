@@ -2,7 +2,7 @@ package luan.datve.dulich.service.impl;
 
 import lombok.AllArgsConstructor;
 import luan.datve.dulich.dto.UserDto;
-import luan.datve.dulich.exception.ResourceNotExceptionFound;
+
 import luan.datve.dulich.mapper.MapperUserAndUserDto;
 import luan.datve.dulich.model.User;
 import luan.datve.dulich.repository.UserRepository;
@@ -114,4 +114,5 @@ public class UserSerViceImpl implements UserService {
         UserDto userDto = mapperUserAndUserDto.userToUserDto(saved);
         return userDto;
     }
+
 }

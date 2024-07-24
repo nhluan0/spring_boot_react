@@ -15,3 +15,5 @@ export const apiUpdateUserById = (id, user) => axios.put(`${URL_BASE}/${id}`, us
 export const apiGetById = (id) => axios.get(`${URL_BASE}/get/${id}`)
 // api patch user by id 
 export const apiPatchById = (id) => axios.patch(`${URL_BASE}/${id}`)
+// api get paginate 
+export const apiPaginateByPage = (page) => axios.get(`${URL_BASE}/phan-trang/${page}`)

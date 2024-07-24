@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @CrossOrigin("*")
 @RestController
@@ -139,7 +140,23 @@ public class UserController {
         if (userDto == null) {
             return new ResponseEntity<>("User does not exist with given id: " + id, HttpStatus.BAD_REQUEST);
         }
+        if(userDto.getRoles().equalsIgnoreCase("ROLE_ADMIN")){
+            return new ResponseEntity<>("ADMIN khong the Xoa", HttpStatus.BAD_REQUEST);
+        }
         return ResponseEntity.ok(userDto);
     }
+    // build api paginate
+    @GetMapping("/phan-trang/{page}")
+    public ResponseEntity<?> paginateByNumPage(@PathVariable("page") int page){
+        Page<UserDto> userPage = null;
+        Page<UserDto> userPage1 = userService.getListUserByPage(0);
+        if(page - 1 >= 0){
+            userPage   = userService.getListUserByPage(page-1);
+        }
+        if(userPage == null || page-1 < 0)return new ResponseEntity<>(userPage1,HttpStatus.BAD_REQUEST);
+        return ResponseEntity.ok(userPage);
+    }
+
+
 
 }

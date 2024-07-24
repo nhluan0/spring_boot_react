@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { apiGetAllUserByPage, apiPatchById, apiSearchByUserNameOrPhoneNumber } from '../service/UserService'
+import { apiGetAllUserByPage, apiPaginateByPage, apiPatchById, apiSearchByUserNameOrPhoneNumber } from '../service/UserService'
 import ModalAddOrUpdateUser from './ModalAddOrUpdateUser'
 import { useNavigate } from 'react-router-dom'
 
@@ -15,6 +15,10 @@ function ManagerUser() {
     const [errorSearch, setErrorSearch] = useState("")
     // show modal update
     const [modalUpdate, setModalUpdate] = useState(false)
+
+
+
+
 
     const navigator = useNavigate()
 
@@ -53,7 +57,7 @@ function ManagerUser() {
                         setUsers(response.data)
                         // set gia tri input search ve lai ""
                         setInputSearch("")
-                        setTotalPage([])
+                        // setTotalPage([])
                     }
 
                 }
@@ -76,14 +80,59 @@ function ManagerUser() {
         navigator(`/users/${id}`)
     }
     // xu ly khoa or mo khoa
-    const handleLockOrUnLock = async (id) => {
+    const handleLockOrUnLock = async (id, index) => {
 
         await apiPatchById(id).then(response => {
             console.log(response.data)
-            setRefeshUser(true)
+            // coppy user cu
+            let newUsers = [...users]
+            // set thuoc tinh isLock cho usermoi
+            newUsers[index].isLock = !newUsers[index].isLock
+            // cap nhat users thanh user moi
+            setUsers(newUsers)
+
+        }).catch(err => {
+            // hien thi loi
+            setErrorSearch(err.response.data)
+            console.error(err)
+            setTimeout(() => {
+                setErrorSearch("")
+
+            }, 3000)
+        })
+    }
+
+    // ham click phan trang 
+    const handleClickPaginate = async (page) => {
+
+        await apiPaginateByPage(page).then(response => {
+            console.log(response)
+            // to mau phan trang
+            setPaintPhantrang(page)
+            const userList = response.data.content
+            // set lai user lay duoc
+            setUsers(userList)
         }).catch(err => {
             console.error(err)
         })
+    }
+    // nut next or prev phan trang click
+    const handleNext = async (page) => {
+        if (page == totalPage.length) {
+            page = 1
+        } else {
+            page += 1
+        }
+        handleClickPaginate(page)
+    }
+    // nut next or prev phan trang click
+    const handlePrev = async (page) => {
+        if (page == 1) {
+            page = totalPage.length
+        } else {
+            page -= 1
+        }
+        handleClickPaginate(page)
     }
     return (
         <main className='container-lg'>
@@ -131,8 +180,9 @@ function ManagerUser() {
                     </thead>
                     <tbody>
                         {users.length > 0 &&
-                            users.map((user) =>
+                            users.map((user, index) =>
                                 <tr key={user.id}>
+
                                     <td>{user.fullName}</td>
                                     <td>{user.email}</td>
                                     <td>{user.phoneNumber}</td>
@@ -150,8 +200,8 @@ function ManagerUser() {
                                         </button>
 
                                         {!user.isLock ?
-                                            <button onClick={() => handleLockOrUnLock(user.id)} type="button" className="btn btn-success btn-sm ">Khóa</button>
-                                            : <button onClick={() => handleLockOrUnLock(user.id)} type="button" className="btn btn-danger btn-sm">Mở</button>}
+                                            <button onClick={() => handleLockOrUnLock(user.id, index)} type="button" className="btn btn-success btn-sm ">Khóa</button>
+                                            : <button onClick={() => handleLockOrUnLock(user.id, index)} type="button" className="btn btn-danger btn-sm">Mở</button>}
 
                                     </td>
                                 </tr>)
@@ -162,23 +212,22 @@ function ManagerUser() {
                 {totalPage.length > 0 &&
                     <nav aria-label="navigation" >
                         <ul className="pagination" >
-                            <li className="page-item"><a className="page-link " href="#">{"<<"}</a></li>
+                            <li className="page-item" onClick={() => handlePrev(paintPhantrang)}><a className="page-link " style={{ cursor: "pointer" }}>{"<<"}</a></li>
 
                             {totalPage.map(page =>
                                 <li
                                     key={page}
                                     className="page-item"
-                                    onClick={() => {
-                                        setPaintPhantrang(page)
-                                    }}
+                                    onClick={() => handleClickPaginate(page)}
+                                    style={{ cursor: "pointer" }}
                                 >
-                                    <a className={paintPhantrang === page ? "page-link bg-info" : "page-link "} href="#">
+                                    <a className={paintPhantrang === page ? "page-link bg-info" : "page-link "}>
                                         {page}
                                     </a>
                                 </li>
                             )}
 
-                            <li className="page-item"><a className="page-link" href="#">{">>"}</a></li>
+                            <li className="page-item" onClick={() => handleNext(paintPhantrang)}><a className="page-link" style={{ cursor: "pointer" }}>{">>"}</a></li>
                         </ul>
                     </nav>}
 

@@ -21,3 +21,41 @@
 .x_close:hover {
     opacity: 0.5;
 }
+
+/* css pagination react */
+/* PaginationComponent.css */
+
+.pagination {
+    display: flex;
+    list-style-type: none;
+    padding: 0;
+    justify-content: center;
+}
+
+/* .page-item {
+    margin: 0 5px;
+}
+
+.page-link {
+    padding: 10px 15px;
+    border: 1px solid #007bff;
+    color: #007bff;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.page-link:hover {
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+}
+
+.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+.break-me {
+    cursor: default;
+} */
+*/
