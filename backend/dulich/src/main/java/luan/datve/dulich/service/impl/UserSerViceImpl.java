@@ -108,6 +108,9 @@ public class UserSerViceImpl implements UserService {
         Optional<User> user = userRepository.findById(id);
         if(!user.isPresent())return null;
         User user1 = user.get();
+        if(user1.getRoles().getRole().equalsIgnoreCase("ROLE_ADMIN")){
+            return null;
+        }
         user1.setIsLock(!user1.getIsLock());
         // luu vao database
         User saved = userRepository.save(user1);

@@ -138,7 +138,7 @@ public class UserController {
     public ResponseEntity<?> isLockOrUnLock(@PathVariable("id") Long id){
         UserDto userDto = userService.lockOrUnLockUser(id);
         if (userDto == null) {
-            return new ResponseEntity<>("User does not exist with given id: " + id, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("User does not exist or admin can't delete", HttpStatus.BAD_REQUEST);
         }
         if(userDto.getRoles().equalsIgnoreCase("ROLE_ADMIN")){
             return new ResponseEntity<>("ADMIN khong the Xoa", HttpStatus.BAD_REQUEST);
