@@ -1,0 +1,5 @@
+/* dung cho anh ReactQuill */
+.ql-editor img {
+    max-width: 400px;
+    max-height: 400px;
+}

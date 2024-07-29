@@ -58,4 +58,7 @@
 .break-me {
     cursor: default;
 } */
-*/
+/* ap dung cho anh cua ReactQuill */
+p img {
+    display: block;
+}
