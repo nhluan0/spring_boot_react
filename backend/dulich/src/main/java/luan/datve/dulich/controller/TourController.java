@@ -28,7 +28,7 @@ public class TourController {
     // build Api add new Tour
     @PostMapping
     public ResponseEntity<?> addNewTour( @Valid @ModelAttribute TourModalAttribute tourModalAttribute,
-                                        @RequestParam("file") MultipartFile file, BindingResult bindingResult) throws SQLException, IOException {
+                                        @RequestParam("file") MultipartFile file) throws SQLException, IOException {
 
         // Chuyển đổi LocalDate sang java.sql.Date
         Date startDate = Date.valueOf(tourModalAttribute.getStart_date());
@@ -59,5 +59,22 @@ public class TourController {
         List<TourDto> tourDtos = tourService.searchByAddress(address);
         if(tourDtos == null) return new ResponseEntity<>("Khong tim thay dia chi da nhap, vui long nhap dia chi khac",HttpStatus.BAD_REQUEST);
         return ResponseEntity.ok(tourDtos);
+    }
+
+    // update tour
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateTourById(@PathVariable Long id,@Valid @ModelAttribute TourModalAttribute tourModalAttribute,
+                                            @RequestParam(value = "file",required = false) MultipartFile file, BindingResult bindingResult) throws SQLException, IOException {
+
+        Date startDate = Date.valueOf(tourModalAttribute.getStart_date());
+        Date endDate = Date.valueOf(tourModalAttribute.getDate_end());
+        TourDto tourDto = tourService.updateTourById(id,
+                tourModalAttribute.getTitle(),file,tourModalAttribute.getDescription(),
+                startDate ,
+                endDate ,
+                tourModalAttribute.getPrice(),
+                tourModalAttribute.getAddress());
+        return ResponseEntity.ok(tourDto);
+
     }
 }

@@ -1,9 +1,12 @@
 
 
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const PaginationItems = ({ currentItems }) => {
-
+    const navigator = useNavigate()
+    function handleUpdateTour(id) {
+        navigator(`/tours/update/${id}`)
+    }
 
     return (
 
@@ -37,12 +40,13 @@ const PaginationItems = ({ currentItems }) => {
                                         />
                                     </div>
                                 </td>
-                                <td><Link to={`/tours/${tour.id}`}>Xem chi tiết</Link></td>
+                                <td><Link to={`/tours/view/detail/${tour.id}`}>Xem chi tiết</Link></td>
                                 <td>{tour.start_date}</td>
                                 <td>{tour.end_date}</td>
                                 <td>{tour.address}</td>
                                 <td >
                                     <button
+                                        onClick={() => handleUpdateTour(tour.id)}
                                         className='btn btn-sm btn-success'
                                     >
                                         sửa

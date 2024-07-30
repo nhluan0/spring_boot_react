@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { apiGetAllTour, apiSearchTourByAddress } from '../service/TourService'
 import { Link, useNavigate } from 'react-router-dom'
 import PaginationCommon from '../pagination/PaginationCommon'
+import HeaderManager from '../../common/HeaderManager'
 
 const ManagerTour = () => {
     const [tours, setTours] = useState([])
@@ -56,41 +57,44 @@ const ManagerTour = () => {
     }
     // chuyen huong toi trang add
     const handleNavigationAdd = () => {
-        navigator("/tours/add-new")
+        navigator("/tours/add_new")
     }
     return (
-        <div className='container-lg'>
-            <br></br>
-            {messAlerts && <div className='alert alert-success'>{messAlerts}</div>}
-            <div className='d-flex py-2'>
-                <button
-                    className='btn btn-sm btn-info '
-                    onClick={handleNavigationAdd}
-                >Thêm</button>
-                <input
-                    className='form-control ms-auto'
-                    style={{ maxWidth: "250px" }}
-                    placeholder='Tìm Kiếm'
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    onKeyDown={(e) => handleKeyPress(e)}
-                ></input>
-            </div>
+        <><HeaderManager></HeaderManager>
+            <div className='container-lg'>
 
-            <PaginationCommon
-                itemsPerPage={3}
-                items={tours}
-                isTour="true"
-                itemOffset={itemOffset}
-                setItemOffset={setItemOffset}
-                currentPage={currentPage}
-                setCurrentPage={setCurrentPage} // Truyền thêm currentPage và setCurrentPage
-            >
+                <br></br>
+                {messAlerts && <div className='alert alert-success'>{messAlerts}</div>}
+                <div className='d-flex align-items-center mb-1'>
+                    <button
+                        className='btn btn-sm btn-info '
+                        onClick={handleNavigationAdd}
+                    >Thêm</button>
+                    <input
+                        className='form-control ms-auto'
+                        style={{ maxWidth: "250px" }}
+                        placeholder='Tìm Kiếm'
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        onKeyDown={(e) => handleKeyPress(e)}
+                    ></input>
+                </div>
 
-            </PaginationCommon>
+                <PaginationCommon
+                    itemsPerPage={3}
+                    items={tours}
+                    isTour="true"
+                    itemOffset={itemOffset}
+                    setItemOffset={setItemOffset}
+                    currentPage={currentPage}
+                    setCurrentPage={setCurrentPage} // Truyền thêm currentPage và setCurrentPage
+                >
+
+                </PaginationCommon>
 
 
-        </div >
+            </div >
+        </>
     )
 }
 

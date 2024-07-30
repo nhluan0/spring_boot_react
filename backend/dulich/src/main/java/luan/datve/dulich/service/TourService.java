@@ -25,4 +25,7 @@ public interface TourService {
 
      List<TourDto> searchByAddress(String address);
 
+     TourDto updateTourById(Long id,String name, MultipartFile file, String description, Date dateStart, Date dateEnd,
+                        String price, String address) throws IOException, SQLException;
+
 }

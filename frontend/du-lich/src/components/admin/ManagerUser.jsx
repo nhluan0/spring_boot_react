@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { apiGetAllUserByPage, apiPaginateByPage, apiPatchById, apiSearchByUserNameOrPhoneNumber } from '../service/UserService'
 import ModalAddOrUpdateUser from './ModalAddOrUpdateUser'
 import { useNavigate } from 'react-router-dom'
+import HeaderManager from '../../common/HeaderManager'
 
 function ManagerUser() {
     const [users, setUsers] = useState([])
@@ -135,106 +136,110 @@ function ManagerUser() {
         handleClickPaginate(page)
     }
     return (
-        <main className='container-lg'>
-            {(showModalAddNewUser || modalUpdate) &&
-                <ModalAddOrUpdateUser
-                    setShowModal={setShowModalAddNewUser}
-                    setRefeshUser={setRefeshUser}
-                    setModalUpdate={setModalUpdate}
-                    showModalAddNewUser={showModalAddNewUser}
-                    modalUpdate={modalUpdate}
-                    setErrorSearch={setErrorSearch}
-                />}
-            <br></br>
-            {errorSearch &&
-                <div className='alert alert-success'>{errorSearch}</div>
-            }
-            <div className=''>
-                <div className='d-flex align-items-center'>
-                    <button onClick={() => setShowModalAddNewUser(true)} className='btn btn-sm btn-secondary'>Thêm</button>
-                    <div className='col-md-2 ms-auto'>
-                        <input
-                            type='text'
-                            className='rounded px-1 form-control'
-                            placeholder='Search...'
-                            value={inputSearch}
-                            onChange={(e) => setInputSearch(e.target.value)}
-                            onKeyDown={handleSearch}
-                        />
+        <>
+            <HeaderManager />
+            <main className='container-lg'>
+                {(showModalAddNewUser || modalUpdate) &&
+                    <ModalAddOrUpdateUser
+                        setShowModal={setShowModalAddNewUser}
+                        setRefeshUser={setRefeshUser}
+                        setModalUpdate={setModalUpdate}
+                        showModalAddNewUser={showModalAddNewUser}
+                        modalUpdate={modalUpdate}
+                        setErrorSearch={setErrorSearch}
+                    />}
+                <br></br>
+                {errorSearch &&
+                    <div className='alert alert-success'>{errorSearch}</div>
+                }
+                <div className=''>
+                    <div className='d-flex align-items-center'>
+                        <button onClick={() => setShowModalAddNewUser(true)} className='btn btn-sm btn-secondary'>Thêm</button>
+                        <div className='col-md-2 ms-auto'>
+                            <input
+                                type='text'
+                                className='rounded px-1 form-control'
+                                placeholder='Search...'
+                                value={inputSearch}
+                                onChange={(e) => setInputSearch(e.target.value)}
+                                onKeyDown={handleSearch}
+                            />
+                        </div>
+
                     </div>
+                    <div className='table-responsive'>
+                        <table className='table table-response '>
+                            <thead>
+                                <tr>
+                                    <th>Họ tên</th>
+                                    <th>Email</th>
+                                    <th>Số điện thoại</th>
+                                    <th>Tài khoản</th>
+                                    <th>Vai trò</th>
+                                    <th>Trạng thái</th>
+                                    <th style={{ minWidth: "180px" }}>Hành động</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {users.length > 0 &&
+                                    users.map((user, index) =>
+                                        <tr key={user.id}>
+
+                                            <td>{user.fullName}</td>
+                                            <td>{user.email}</td>
+                                            <td>{user.phoneNumber}</td>
+                                            <td>{user.userName}</td>
+                                            <td>{user.roles}</td>
+                                            {!user.isLock ? <td className='text-success fw-bold'>Hoạt động</td> :
+                                                <td className='text-danger fw-bold'>khóa</td>}
+                                            <td >
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-primary btn-sm mx-1"
+                                                    onClick={() => handelShowModalUpdate(user.id)}
+                                                >
+                                                    Sửa
+                                                </button>
+
+                                                {!user.isLock ?
+                                                    <button onClick={() => handleLockOrUnLock(user.id, index)} type="button" className="btn btn-success btn-sm ">Khóa</button>
+                                                    : <button onClick={() => handleLockOrUnLock(user.id, index)} type="button" className="btn btn-danger btn-sm">Mở</button>}
+
+                                            </td>
+                                        </tr>)
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    {/* phan trang */}
+                    {totalPage.length > 0 &&
+                        <nav aria-label="navigation" >
+                            <ul className="pagination" >
+                                <li className="page-item" onClick={() => handlePrev(paintPhantrang)}><a className="page-link " style={{ cursor: "pointer" }}>{"<<"}</a></li>
+
+                                {totalPage.map(page =>
+                                    <li
+                                        key={page}
+                                        className="page-item"
+                                        onClick={() => handleClickPaginate(page)}
+                                        style={{ cursor: "pointer" }}
+                                    >
+                                        <a className={paintPhantrang === page ? "page-link bg-info" : "page-link "}>
+                                            {page}
+                                        </a>
+                                    </li>
+                                )}
+
+                                <li className="page-item" onClick={() => handleNext(paintPhantrang)}><a className="page-link" style={{ cursor: "pointer" }}>{">>"}</a></li>
+                            </ul>
+                        </nav>}
+
 
                 </div>
 
-                <table className='table table-response '>
-                    <thead>
-                        <tr>
-                            <th>Họ tên</th>
-                            <th>Email</th>
-                            <th>Số điện thoại</th>
-                            <th>Tài khoản</th>
-                            <th>Vai trò</th>
-                            <th>Trạng thái</th>
-                            <th style={{ minWidth: "180px" }}>Hành động</th>
-
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {users.length > 0 &&
-                            users.map((user, index) =>
-                                <tr key={user.id}>
-
-                                    <td>{user.fullName}</td>
-                                    <td>{user.email}</td>
-                                    <td>{user.phoneNumber}</td>
-                                    <td>{user.userName}</td>
-                                    <td>{user.roles}</td>
-                                    {!user.isLock ? <td className='text-success fw-bold'>Hoạt động</td> :
-                                        <td className='text-danger fw-bold'>khóa</td>}
-                                    <td >
-                                        <button
-                                            type="button"
-                                            className="btn btn-primary btn-sm mx-1"
-                                            onClick={() => handelShowModalUpdate(user.id)}
-                                        >
-                                            Sửa
-                                        </button>
-
-                                        {!user.isLock ?
-                                            <button onClick={() => handleLockOrUnLock(user.id, index)} type="button" className="btn btn-success btn-sm ">Khóa</button>
-                                            : <button onClick={() => handleLockOrUnLock(user.id, index)} type="button" className="btn btn-danger btn-sm">Mở</button>}
-
-                                    </td>
-                                </tr>)
-                        }
-                    </tbody>
-                </table>
-                {/* phan trang */}
-                {totalPage.length > 0 &&
-                    <nav aria-label="navigation" >
-                        <ul className="pagination" >
-                            <li className="page-item" onClick={() => handlePrev(paintPhantrang)}><a className="page-link " style={{ cursor: "pointer" }}>{"<<"}</a></li>
-
-                            {totalPage.map(page =>
-                                <li
-                                    key={page}
-                                    className="page-item"
-                                    onClick={() => handleClickPaginate(page)}
-                                    style={{ cursor: "pointer" }}
-                                >
-                                    <a className={paintPhantrang === page ? "page-link bg-info" : "page-link "}>
-                                        {page}
-                                    </a>
-                                </li>
-                            )}
-
-                            <li className="page-item" onClick={() => handleNext(paintPhantrang)}><a className="page-link" style={{ cursor: "pointer" }}>{">>"}</a></li>
-                        </ul>
-                    </nav>}
-
-
-            </div>
-
-        </main>
+            </main>
+        </>
     )
 }
 

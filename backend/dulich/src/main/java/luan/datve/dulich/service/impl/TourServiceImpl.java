@@ -16,6 +16,7 @@ import java.sql.Blob;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -89,5 +90,33 @@ public class TourServiceImpl implements TourService {
             }
         }).collect(Collectors.toList());
         return tourDtos;
+    }
+
+    // update Tour by id
+    @Override
+    public TourDto updateTourById(Long id, String name, MultipartFile file, String description, Date dateStart, Date dateEnd, String price, String address) throws IOException, SQLException {
+        // get Tour by id
+        Tour tour = tourRepository.findById(id).orElseThrow(
+                ()->  new ResourceNotExceptionFound("ko tim thay Tour voi id da cho")
+        );
+        if(file != null  ){
+            if(!file.isEmpty()){
+                // chuyen doi file den byte
+                byte[] fileByte = file.getBytes();
+                // chuyen byte thanh du lieu blob
+                Blob fileBlob = new SerialBlob(fileByte);
+                tour.setImage(fileBlob);
+            }
+
+        }
+            tour.setName(name);
+            tour.setDescription(description);
+            tour.setAddress(address);
+            tour.setPrice(price);
+            tour.setStart_date(dateStart);
+            tour.setEnd_date(dateEnd);
+
+        Tour savedTour = tourRepository.save(tour);
+        return mapperTourAndTourDto.tourToTourDto(savedTour);
     }
 }

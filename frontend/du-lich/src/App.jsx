@@ -19,9 +19,10 @@ function App() {
         <Route path='/users' element={<ManagerUser />}></Route>
         {/*http://localhost:5173/users/id update user */}
         <Route path='/users/:id' element={<ManagerUser />}></Route>
-        <Route path='/tours/add-new' element={<AddNewTour />}></Route>
+        <Route path='/tours/:add_new' element={<AddNewTour />}></Route>
+        <Route path='/tours/update/:idUpdate' element={<AddNewTour />}></Route>
         <Route path='/tours' element={<ManagerTour />}></Route>
-        <Route path='/tours/:id' element={<DetailTour />}></Route>
+        <Route path='/tours/view/detail/:id' element={<DetailTour />}></Route>
       </Routes>
       {/* <PaginationCommon itemsPerPage={2} items={items} /> */}
 
