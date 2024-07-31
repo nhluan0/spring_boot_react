@@ -35,4 +35,8 @@ public class Booking {
     })
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToOne(fetch = FetchType.EAGER,mappedBy = "booking")
+    private BookingPeople bookingPeople;
+
 }
