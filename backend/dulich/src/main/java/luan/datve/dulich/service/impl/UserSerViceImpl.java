@@ -1,32 +1,55 @@
 package luan.datve.dulich.service.impl;
 
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import luan.datve.dulich.Jwt.JwtProvider;
+import luan.datve.dulich.dto.TourDto;
 import luan.datve.dulich.dto.UserDto;
 
+import luan.datve.dulich.dto.request.LoginRequest;
+import luan.datve.dulich.dto.response.LoginResponse;
+import luan.datve.dulich.dto.response.LogoutResponse;
+import luan.datve.dulich.exception.ResourceNotExceptionFound;
 import luan.datve.dulich.mapper.MapperUserAndUserDto;
+import luan.datve.dulich.model.LogoutToken;
+import luan.datve.dulich.model.Tour;
 import luan.datve.dulich.model.User;
+import luan.datve.dulich.repository.LogoutTokenRepository;
 import luan.datve.dulich.repository.UserRepository;
 import luan.datve.dulich.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserSerViceImpl implements UserService {
-    private UserRepository userRepository;
-    private MapperUserAndUserDto mapperUserAndUserDto;
+    UserRepository userRepository;
+    MapperUserAndUserDto mapperUserAndUserDto;
+    PasswordEncoder passwordEncoder;
+    JwtProvider jwtProvider;
+    LogoutTokenRepository logoutTokenRepository;
 
     // add new user
     @Override
     public UserDto addNew(UserDto userDto) {
         User user = mapperUserAndUserDto.userDtoToUser(userDto);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         User savedUser = userRepository.save(user);
         return mapperUserAndUserDto.userToUserDto(savedUser);
     }
@@ -94,14 +117,17 @@ public class UserSerViceImpl implements UserService {
 
 
     // update user by id
+
     @Override
     public UserDto updateUserById(Long id, UserDto userDto) {
         userDto.setId(id);
         User savedUser = mapperUserAndUserDto.userDtoToUser(userDto);
+
         savedUser = userRepository.save(savedUser);
         UserDto userDtoResponse = mapperUserAndUserDto.userToUserDto(savedUser);
         return userDtoResponse;
     }
+
 
     @Override
     public UserDto lockOrUnLockUser(Long id) {
@@ -117,5 +143,56 @@ public class UserSerViceImpl implements UserService {
         UserDto userDto = mapperUserAndUserDto.userToUserDto(saved);
         return userDto;
     }
+
+    // login tao token
+    @Override
+    public LoginResponse login(LoginRequest loginRequest) throws JOSEException {
+        var usernameOrEmail = loginRequest.getUserNameOrEmail();
+        // check username or email co ton tai ko
+        User user = userRepository.findByUserNameOrEmail(usernameOrEmail,usernameOrEmail);
+
+        if(user == null) throw new ResourceNotExceptionFound("email or username ko existed");
+        // kiem tra password co trung voi password da luu ko
+        Boolean checkPw = passwordEncoder.matches(loginRequest.getPassword(),user.getPassword());
+        if(!checkPw) throw new ResourceNotExceptionFound("mat khau ko dung");
+
+        // generate jwt token
+        String token = jwtProvider.generateToken(user);
+
+        return new LoginResponse().builder()
+                .token(token)
+                .build();
+    }
+
+    @Override
+    public LogoutResponse logout(String token) throws ParseException, JOSEException {
+        // xac thuc token
+        SignedJWT signedJWT = jwtProvider.verifier(token);
+        // xac thuc to ken thanh cong thi can lam gi nua
+        // 1. lay id token
+        // 2. save vao database
+        // lay claim
+        JWTClaimsSet claimsSet = signedJWT.getJWTClaimsSet();
+        // lay id token
+        String jlt = claimsSet.getJWTID();
+        // lay date expiration
+        Date expiration = claimsSet.getExpirationTime();
+        // tao LogoutToken
+        LogoutToken logoutToken = LogoutToken.builder()
+                .id(jlt)
+                .date(new java.sql.Date(expiration.getTime()))
+                .build();
+
+        // luu vao database
+        logoutTokenRepository.save(logoutToken);
+        // set response logout
+        LogoutResponse logoutResponse = LogoutResponse.builder()
+                .mess("logout thanh cong")
+                .build();
+        return logoutResponse;
+    }
+
+    // search by price or location
+
 
 }

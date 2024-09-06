@@ -28,9 +28,11 @@ public class TourDto {
     private String price;
     private String address;
     private Boolean isLock = false;
-    private List<Booking> bookingList;
+    private String priceAdult;
+    private String priceChildren;
+//    private List<Booking> bookingList;
 
-    public TourDto(Long id, String name, byte[] image, String description, Date start_date, Date end_date, String price, String address, Boolean isLock, List<Booking> bookingList) {
+    public TourDto(Long id, String name, byte[] image, String description, Date start_date, Date end_date, String price, String address, Boolean isLock) {
         this.id = id;
         this.name = name;
         this.image = image != null ? Base64.getEncoder().encodeToString(image):null;
@@ -40,7 +42,7 @@ public class TourDto {
         this.price = price;
         this.address = address;
         this.isLock = isLock;
-        this.bookingList = bookingList;
+
     }
 
 

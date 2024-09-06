@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "booking")
@@ -19,7 +20,16 @@ public class Booking {
     private Long id;
 
     @Column(name = "created_date")
-    private Date created_date;
+    private Date createdDate;
+
+    @Column(name = "quantity_adults")
+    private String quantityAdults;
+
+    @Column(name = "quantity_children")
+    private String quantityChildren;
+
+    @Column(name = "total_price")
+    private String total_price;
 
     @Column(name = "status")
     private Boolean status;
@@ -30,13 +40,12 @@ public class Booking {
     @JoinColumn(name = "tour_id")
     private Tour tour;
 
-    @ManyToOne(fetch = FetchType.LAZY,cascade ={
+    @ManyToOne (fetch = FetchType.LAZY,cascade ={
             CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH
     })
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne(fetch = FetchType.EAGER,mappedBy = "booking")
-    private BookingPeople bookingPeople;
+
 
 }

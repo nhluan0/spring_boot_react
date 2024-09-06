@@ -37,3 +37,5 @@ export const apiUpdateTourById = (id, tour, file) => {
 
     return axios.put(`${URL_BASIC}/${id}`, formData)
 }
+// api get 10 tour by price desc 
+export const apiGet10TourByPriceDesc = () => axios.get(`${URL_BASIC}/price-desc`);

@@ -34,12 +34,14 @@ public class MapperTourAndTourDto {
                 tour.getName(),
                 blobToString(tour),
                 tour.getDescription(),
-                tour.getStart_date(),
+                tour.getStartDate(),
                 tour.getEnd_date(),
                 tour.getPrice(),
                 tour.getAddress(),
                 tour.getIsLock(),
-                tour.getBookingList()
+                tour.getPriceAdult(),
+                tour.getPriceChildren()
+
         );
     }
 

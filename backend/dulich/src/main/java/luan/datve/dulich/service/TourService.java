@@ -23,9 +23,17 @@ public interface TourService {
      // get all Tour
      List<TourDto> getAllTour();
 
+     // get tour by address
      List<TourDto> searchByAddress(String address);
 
+     // get tour by id
      TourDto updateTourById(Long id,String name, MultipartFile file, String description, Date dateStart, Date dateEnd,
                         String price, String address) throws IOException, SQLException;
 
+     // get list tour by decrease price , get 10 tour
+     List<TourDto> getTenTourByDecreasePrice();
+
+     List<TourDto> searchByLocationOrPrice(String location, String price);
+
+     List<TourDto> searchByStartDate(Date date);
 }

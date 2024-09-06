@@ -1,7 +1,10 @@
 package luan.datve.dulich.exception;
 
+import luan.datve.dulich.dto.response.LoginErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -17,7 +20,7 @@ public class ExceptionManager {
 
     @ExceptionHandler(value = ResourceNotExceptionFound.class)
     public ResponseEntity<?> notFound(ResourceNotExceptionFound resourceNotExceptionFound){
-        return new ResponseEntity<>(resourceNotExceptionFound.getLocalizedMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(resourceNotExceptionFound.getMessage(), HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ResponseEntity<?> validTourException(MethodArgumentNotValidException exception){
@@ -39,4 +42,15 @@ public class ExceptionManager {
         map.put("file","file ko bo trong");
         return new ResponseEntity<>(map,HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(value = AccessDeniedException.class)
+    ResponseEntity<?> accessDenied(AccessDeniedException exception){
+        return new ResponseEntity<>(exception.getMessage(),HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(value = AuthenticationServiceException.class)
+    ResponseEntity<?> accessDenied(AuthenticationServiceException exception){
+        return new ResponseEntity<>(exception.getMessage(),HttpStatus.UNAUTHORIZED);
+    }
+
 }

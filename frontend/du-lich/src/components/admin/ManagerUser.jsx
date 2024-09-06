@@ -3,6 +3,7 @@ import { apiGetAllUserByPage, apiPaginateByPage, apiPatchById, apiSearchByUserNa
 import ModalAddOrUpdateUser from './ModalAddOrUpdateUser'
 import { useNavigate } from 'react-router-dom'
 import HeaderManager from '../../common/HeaderManager'
+import { getToken } from '../service/LoginService'
 
 function ManagerUser() {
     const [users, setUsers] = useState([])
@@ -32,7 +33,7 @@ function ManagerUser() {
 
     // ham goi api get all user for first load page
     const handleApiGetAllUser = async () => {
-
+        console.log(getToken())
         await apiGetAllUserByPage().then(response => {
             console.log(response)
             setUsers(response.data.content)

@@ -3,6 +3,8 @@ package luan.datve.dulich.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "user")
 @Data
@@ -40,4 +42,9 @@ public class User {
     })
     @JoinColumn(name = "role_id")
     private Role roles;
+
+//    @OneToMany(mappedBy = "user",fetch = FetchType.LAZY,cascade ={
+//            CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.DETACH
+//    })
+//    private List<Booking> bookingList;
 }

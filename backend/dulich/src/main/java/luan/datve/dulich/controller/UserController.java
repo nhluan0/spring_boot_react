@@ -3,12 +3,19 @@ package luan.datve.dulich.controller;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import luan.datve.dulich.dto.UserDto;
+import luan.datve.dulich.dto.request.RegisterRequest;
+import luan.datve.dulich.mapper.MapperRegister;
 import luan.datve.dulich.mapper.MapperUserAndUserDto;
+import luan.datve.dulich.model.Role;
 import luan.datve.dulich.model.User;
+import luan.datve.dulich.repository.RoleRepository;
+import luan.datve.dulich.repository.UserRepository;
+import luan.datve.dulich.service.RoleService;
 import luan.datve.dulich.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @CrossOrigin("*")
@@ -25,10 +33,12 @@ import java.util.stream.Collectors;
 public class UserController {
     private UserService userService;
     private MapperUserAndUserDto mapperUserAndUserDto;
-
-
+    private MapperRegister mapperRegister;
+    private RoleRepository roleRepository;
+    private UserRepository userRepository;
 
     // build Api add a new user
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<?> addNewUser(@Valid @RequestBody UserDto userDto,
                                               BindingResult bindingResult){
@@ -61,6 +71,7 @@ public class UserController {
     }
 
     // build Api get first page users
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<Page<UserDto>> getAllUser(){
         Page<UserDto> userPage = userService.getListUserByPage(0);
@@ -68,6 +79,7 @@ public class UserController {
         return ResponseEntity.ok(userPage);
     }
     // build Api search username or phone number
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{userNameOrPhoneNumber}")
     public ResponseEntity<?> searchByPhoneOrFullName(
             @PathVariable("userNameOrPhoneNumber") String mark){
@@ -76,6 +88,7 @@ public class UserController {
         return ResponseEntity.ok(userDtoList);
     }
     // build Api update user existed
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("{id}")
     public ResponseEntity<?> updateUserExisted(@PathVariable("id") Long id,
                                                @Valid @RequestBody UserDto userDto,
@@ -124,6 +137,7 @@ public class UserController {
         return ResponseEntity.ok(updatedUserDto);
     }
     // build Api get user by id
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/get/{id}")
     public ResponseEntity<?> getUserById(@PathVariable("id") Long id) {
         User user = userService.getUserById(id);
@@ -134,6 +148,7 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
     // build api lock or unlock an account
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{id}")
     public ResponseEntity<?> isLockOrUnLock(@PathVariable("id") Long id){
         UserDto userDto = userService.lockOrUnLockUser(id);
@@ -146,6 +161,7 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
     // build api paginate
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/phan-trang/{page}")
     public ResponseEntity<?> paginateByNumPage(@PathVariable("page") int page){
         Page<UserDto> userPage = null;
@@ -156,6 +172,7 @@ public class UserController {
         if(userPage == null || page-1 < 0)return new ResponseEntity<>(userPage1,HttpStatus.BAD_REQUEST);
         return ResponseEntity.ok(userPage);
     }
+
 
 
 

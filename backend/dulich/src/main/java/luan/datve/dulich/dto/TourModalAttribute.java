@@ -43,4 +43,6 @@ public class TourModalAttribute {
 
     @NotBlank(message = "dia chi ko bo trong")
     private String address;
+    private String priceAdult;
+    private String priceChildren;
 }

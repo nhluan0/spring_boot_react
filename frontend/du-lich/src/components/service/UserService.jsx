@@ -1,4 +1,19 @@
 import axios from "axios"
+import { getToken } from "./LoginService";
+// chan moi request , dien vao token phan header
+axios.interceptors.request.use(function (config) {
+    // Do something before request is sent
+    const token = getToken()
+    // set thuoc tinh Authorization phan header 
+    if (token != null) {
+        config.headers['Authorization'] = token
+    }
+
+    return config;
+}, function (error) {
+    // Do something with request error
+    return Promise.reject(error);
+});
 
 const URL_BASE = "http://localhost:8080/users"
 

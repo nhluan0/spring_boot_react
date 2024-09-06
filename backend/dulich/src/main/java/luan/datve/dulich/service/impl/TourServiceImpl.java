@@ -18,6 +18,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,7 +43,7 @@ public class TourServiceImpl implements TourService {
         tour.setDescription(description);
         tour.setAddress(address);
         tour.setPrice(price);
-        tour.setStart_date(dateStart);
+        tour.setStartDate(dateStart);
         tour.setEnd_date(dateEnd);
         Tour savedTour = tourRepository.save(tour);
 
@@ -113,10 +114,63 @@ public class TourServiceImpl implements TourService {
             tour.setDescription(description);
             tour.setAddress(address);
             tour.setPrice(price);
-            tour.setStart_date(dateStart);
+            tour.setStartDate(dateStart);
             tour.setEnd_date(dateEnd);
 
         Tour savedTour = tourRepository.save(tour);
         return mapperTourAndTourDto.tourToTourDto(savedTour);
+    }
+
+    // get 10 tour theo giá giảm dần
+    @Override
+    public List<TourDto> getTenTourByDecreasePrice() {
+        List<Tour> tours = tourRepository.findTenTourByPriceDecrease();
+        List<TourDto> tourDtos = tours.stream().map((tour)-> {
+            try {
+                var tourDto = mapperTourAndTourDto.tourToTourDto(tour);
+                tourDto.setDescription(""); // set phan mo ta de giam luu luu luong truyen tai
+                return tourDto;
+            } catch (SQLException e) {
+                throw new ResourceNotExceptionFound("Error chuyen doi sql");
+            }
+        }).collect(Collectors.toList());
+        return tourDtos;
+    }
+
+    // search tour by location or price
+    @Override
+    public List<TourDto> searchByLocationOrPrice(String location, String price) {
+        List<Tour> tours = tourRepository.findByAddressContainingOrPriceContaining(location,price);
+        List<TourDto> tourDtos = new ArrayList<>();
+        if(tours != null || tours.size() > 0){
+            tourDtos = tours.stream().map(tour -> {
+                try {
+                    return mapperTourAndTourDto.tourToTourDto(tour);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }).collect(Collectors.toList());
+        }
+        return tourDtos;
+    }
+
+    // search by date start
+    @Override
+    public List<TourDto> searchByStartDate(Date date) {
+        List<Tour> tour = tourRepository.findByStartDate(date);
+        List<TourDto> tourDtos = new ArrayList<>();
+
+        if(!tour.isEmpty()){
+            tourDtos = tour.stream().map(
+                    t-> {
+                        try {
+                            return mapperTourAndTourDto.tourToTourDto(t);
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+            ).collect(Collectors.toList());
+        }
+        return tourDtos;
     }
 }

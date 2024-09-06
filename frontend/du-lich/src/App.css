@@ -59,4 +59,102 @@
     cursor: default;
 } */
 /* ap dung cho anh cua ReactQuill */
-p img {}
+p img {
+    display: block;
+    width: 100%;
+}
+
+/* page - home */
+.top-home-page {
+    background-image: url("./images/anh-bia-page-home.jpg");
+    height: 500px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-origin: content-box;
+    position: relative;
+
+}
+
+.head {
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 1;
+
+}
+
+.head>a {
+    margin-left: 40px;
+    cursor: pointer;
+    font-size: 25px !important;
+}
+
+
+
+.head a {
+    color: white;
+
+    font-size: larger;
+}
+
+.btn-outline-dark {
+    color: white !important;
+    border-color: white !important;
+
+}
+
+.content-head {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    bottom: 0;
+}
+
+/* slid tour page home  */
+.silde-tour {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    justify-content: center;
+    align-items: center;
+}
+
+/* phan css search */
+.location {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+@media (max-width:1230px) {
+    .silde-tour {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+}
+
+@media (max-width:900px) {
+    .silde-tour {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width:700px) {
+    .silde-tour {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+}
+
+/* phan drop down */
+/* .info {
+    position: absolute;
+    bottom: -10%;
+    background-color: black;
+    display: inline-block;
+    width: 100px;
+
+
+} */

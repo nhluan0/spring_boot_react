@@ -21,7 +21,7 @@ import java.util.List;
 @Table(name = "tour")
 @Data
 @AllArgsConstructor
-
+@NoArgsConstructor
 public class Tour {
     @Id
     @Column(name = "id")
@@ -39,7 +39,7 @@ public class Tour {
     private String description;
 
     @Column(name = "start_date")
-    private Date start_date;
+    private Date startDate;
 
     @NotNull(message = "start_date ko bo trong")
     private Date end_date;
@@ -53,26 +53,32 @@ public class Tour {
     @Column(name = "status")
     private Boolean isLock = false;
 
-    @OneToMany(mappedBy = "tour",fetch = FetchType.LAZY,cascade = {
-            CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH
-    })
-    private List<Booking> bookingList;
+    @Column(name = "price_adult")
+    private String priceAdult;
 
-    public Tour() {
-        this.bookingList = new ArrayList<>();
-    }
+    @Column(name = "price_children")
+    private String priceChildren;
+
+//    @OneToMany(mappedBy = "tour",fetch = FetchType.LAZY,cascade = {
+//            CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH
+//    })
+//    private List<Booking> bookingList;
+
+//    public Tour() {
+//        this.bookingList = new ArrayList<>();
+//    }
 
     // add 1 Booking
-    public void addNewBooking(Booking booking){
-
-        if(bookingList == null){
-            bookingList = new ArrayList<>();
-        }
-        if(booking == null){
-            throw new ResourceNotExceptionFound("Booking ko ton tai");
-        }
-        bookingList.add(booking);
-        booking.setTour(this);
-    }
+//    public void addNewBooking(Booking booking){
+//
+//        if(bookingList == null){
+//            bookingList = new ArrayList<>();
+//        }
+//        if(booking == null){
+//            throw new ResourceNotExceptionFound("Booking ko ton tai");
+//        }
+//        bookingList.add(booking);
+//        booking.setTour(this);
+//    }
 
 }
