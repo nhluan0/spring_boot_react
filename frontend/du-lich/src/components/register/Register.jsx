@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { apiRegisterUser } from '../service/RegisterNewUserService'
 import { Link } from 'react-router-dom'
+import Header from '../home/Header'
 
 const Register = () => {
     const [email, setEmail] = useState("")
@@ -81,8 +82,11 @@ const Register = () => {
     }
 
     return (
-        <div className='container-lg'>
-            <br></br>
+        <div className='container-lg bg-light'>
+            <div className='bg-info' >
+                <Header />
+            </div>
+
             <div className='row flex-wrap align-content-center justify-content-center' style={{ height: "100vh" }}>
                 <form className='col-lg-6'>
                     <div className='card '>

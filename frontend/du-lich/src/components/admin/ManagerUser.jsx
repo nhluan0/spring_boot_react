@@ -3,7 +3,7 @@ import { apiGetAllUserByPage, apiPaginateByPage, apiPatchById, apiSearchByUserNa
 import ModalAddOrUpdateUser from './ModalAddOrUpdateUser'
 import { useNavigate } from 'react-router-dom'
 import HeaderManager from '../../common/HeaderManager'
-import { getToken } from '../service/LoginService'
+
 
 function ManagerUser() {
     const [users, setUsers] = useState([])

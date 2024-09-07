@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { getUserFromSession } from '../service/LoginService'
 import { apiAddNewBooking } from '../service/BookingService'
 import GlobalContext from '../../UseContext'
 

@@ -3,6 +3,7 @@ import { apiLogin } from '../service/LoginService'
 import { jwtDecode } from 'jwt-decode'
 import { Link, useNavigate } from 'react-router-dom'
 import GlobalContext from '../../UseContext'
+import Header from '../home/Header'
 let tokenGlobal = ""
 // Hàm để cập nhật giá trị của tokenGlobal
 export const setTokenGlobal = (newToken) => {
@@ -72,8 +73,13 @@ const Login = () => {
 
     }
     return (
-        <div className='container-lg '>
-            <div className='row justify-content-center align-items-center m-2' style={{ height: "100vh" }}>
+        <div className='container-lg bg-light'>
+            <div className='bg-info' >
+                <Header />
+            </div>
+
+            <div className='row justify-content-center align-items-center mx-1 ' style={{ height: "100vh" }}>
+
                 <div className='card col-lg-6 '>
 
                     <div className='card-body'>
