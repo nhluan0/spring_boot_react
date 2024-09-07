@@ -14,37 +14,43 @@ import HeaderBody from "./HeaderBody";
 
 const HomePage = () => {
     const [listTour, setListTour] = useState([])
-    const [indexA, setIndexA] = useState(0)
-    const [indexB, setIndexB] = useState(1)
-    const [indexC, setIndexC] = useState(2)
-    const [indexD, setIndexD] = useState(3)
 
-    const navigator = useNavigate()
+    const [tourFilter, setTourFilter] = useState([])
+    const [idex, setIdex] = useState(4); // Đặt idex vào state
 
-    // khi vua load trang dau tien thi load 10 tour theo price desc 
+    const navigator = useNavigate();
+
+    // Khi vừa load trang đầu tiên thì load 10 tour theo price desc 
     useEffect(() => {
-        get10TourByPriceDesc()
+        get10TourByPriceDesc();
 
-    }, [])
-    // set slide anh 
+    }, []);
 
+    // Set slide ảnh 
     useEffect(() => {
         const interval = setInterval(() => {
+            let newIndex = idex;
+            if (newIndex > 9) {
+                newIndex = 4;
+            }
+            const tours = listTour.filter((_, index) => index >= newIndex - 4 && index < newIndex);
+            setTourFilter(tours);
+            console.log(tours, newIndex);
+            setIdex(newIndex + 1); // Cập nhật giá trị của idex
 
-
-            setIndexA(prev => (prev + 1) % 10);
-            setIndexB(prev => (prev + 1) % 10);
-            setIndexC(prev => (prev + 1) % 10);
-            setIndexD(prev => (prev + 1) % 10);
         }, 2000);
         return () => clearInterval(interval);
-    }, []);
+    }, [idex, listTour]); // Thêm listTour vào dependency array
 
     const get10TourByPriceDesc = async () => {
         await apiGet10TourByPriceDesc().then(
             response => {
                 console.log(response.data)
+                let newIndex = idex;
+                const tours = response.data.filter((_, index) => index >= newIndex - 4 && index < newIndex);
+                setTourFilter(tours);
                 setListTour(response.data)
+
             }
         ).catch(err => {
             console.log(err)
@@ -104,50 +110,49 @@ const HomePage = () => {
                 <div>
                     <h3 className='text-center'>Top tour packages</h3>
                     <div className='silde-tour'>
-                        {listTour.length > 0 &&
-                            listTour.map((tour, index) => {
-                                return (index == indexA || index == indexB || index == indexC || index == indexD) &&
-                                    <div
-                                        id={tour.id}
-                                        className="card mx-1 my-1"
-                                        style={{ overflow: "hidden", cursor: "pointer" }}
-                                        key={index}
-                                        onClick={(e) => handleClickDetail(e)}
-                                    >
-                                        <img
-                                            src={`data:image/jpeg;base64,${tour.image}`}
-                                            style={{ height: "150px", width: "auto" }}
-                                        />
-                                        <div className="row  ps-1">
-                                            <h5 className="col-8 " >{tour.name}</h5>
-                                            <h6 className="text-center col-4 text-danger">{tour.price}</h6>
+                        {tourFilter.length > 0 &&
+                            tourFilter.map((tour, index) => {
+                                return <div
+                                    id={tour.id}
+                                    className="card mx-1 my-1"
+                                    style={{ overflow: "hidden", cursor: "pointer" }}
+                                    key={index}
+                                    onClick={(e) => handleClickDetail(e)}
+                                >
+                                    <img
+                                        src={`data:image/jpeg;base64,${tour.image}`}
+                                        style={{ height: "150px", width: "auto" }}
+                                    />
+                                    <div className="row  ps-1">
+                                        <h5 className="col-8 " >{tour.name}</h5>
+                                        <h6 className="text-center col-4 text-danger">{tour.price}</h6>
 
 
+                                    </div>
+                                    <div className="row ps-1 justify-content-center">
+                                        <div className=" col-8 ">
+                                            <FaStar className="text-warning" />
+                                            <FaStar className="text-warning" />
+                                            <FaStar className="text-warning" />
+                                            <FaStar className="text-warning" />
+                                            <FaStar className="text-warning" />
+                                            <label className="form-label ps-2">5 sao</label>
                                         </div>
-                                        <div className="row ps-1 justify-content-center">
-                                            <div className=" col-8 ">
-                                                <FaStar className="text-warning" />
-                                                <FaStar className="text-warning" />
-                                                <FaStar className="text-warning" />
-                                                <FaStar className="text-warning" />
-                                                <FaStar className="text-warning" />
-                                                <label className="form-label ps-2">5 sao</label>
-                                            </div>
-                                            <div className="text-center text-info col-4">VND</div>
+                                        <div className="text-center text-info col-4">VND</div>
+                                    </div>
+                                    <div className="ps-1">
+                                        from {tour.start_date} to {tour.end_date}
+                                    </div>
+                                    <hr style={{ margin: "0", padding: "0" }}></hr>
+                                    <div className="row ps-1 justify-content-center my-2">
+                                        <div className="col-8">
+                                            <IoBookSharp /> {tour.address}
                                         </div>
-                                        <div className="ps-1">
-                                            from {tour.start_date} to {tour.end_date}
-                                        </div>
-                                        <hr style={{ margin: "0", padding: "0" }}></hr>
-                                        <div className="row ps-1 justify-content-center my-2">
-                                            <div className="col-8">
-                                                <IoBookSharp /> {tour.address}
-                                            </div>
-                                            <div className="col-4 ">
-                                                <button className="btn btn-success btn-sm">Book now</button>
-                                            </div>
+                                        <div className="col-4 ">
+                                            <button className="btn btn-success btn-sm">Book now</button>
                                         </div>
                                     </div>
+                                </div>
                             }
 
                             )
