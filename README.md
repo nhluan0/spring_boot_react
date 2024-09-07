@@ -1,1 +1,1 @@
-Du an quna ly va dat lich tour du lich
+Du an quan ly va dat lich tour du lich
