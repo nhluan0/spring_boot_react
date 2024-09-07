@@ -1,9 +1,12 @@
 import axios from "axios"
-import { getToken } from "./LoginService";
+import { GlobalToken } from "../login_logout/Login";
+
+
+
 // chan moi request , dien vao token phan header
 axios.interceptors.request.use(function (config) {
     // Do something before request is sent
-    const token = getToken()
+    const token = GlobalToken()
     // set thuoc tinh Authorization phan header 
     if (token != null) {
         config.headers['Authorization'] = token

@@ -1,30 +1,29 @@
 
 import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { apiLogout, getRole, getUserFromSession, logout } from '../service/LoginService'
-import { useEffect, useState } from 'react'
+import { apiLogout } from '../service/LoginService'
+
+import GlobalContext from '../../UseContext'
+import { setTokenGlobal } from '../login_logout/Login'
+
+
 
 
 const Header = () => {
-    const [username, setUsername] = useState("")
-    const [role, setRole] = useState("")
-    useEffect(() => {
-        // lay username tu session 
-        const user = getUserFromSession()
-        setUsername(user)
-        // lay role 
-        const vaitro = getRole()
-        setRole(vaitro)
-    }, [])
+    const { username, setUsername, role, setRole, setToken } = GlobalContext()
+
     const navigator = useNavigate()
 
     // logout
     const handleLogout = async () => {
         await apiLogout().then(response => {
-            // xoa token va session
-            logout()
+            setToken("")
+            // xoar username 
             setUsername("")
+            // xoa role
             setRole("")
+            setTokenGlobal("")
             console.log(response.data)
+            navigator("/home")
         }).catch(err => {
             console.log(err)
         })

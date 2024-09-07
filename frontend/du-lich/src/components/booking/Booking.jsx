@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { getUserFromSession } from '../service/LoginService'
 import { apiAddNewBooking } from '../service/BookingService'
+import GlobalContext from '../../UseContext'
 
 export default function Booking({ priceAdult, priceChildren, id, tour }) {
     const [adult, setAdult] = useState("")
@@ -9,7 +10,7 @@ export default function Booking({ priceAdult, priceChildren, id, tour }) {
     const [giaAdult, setGiaAdult] = useState(0)
     const [giaChildren, setGiaChildren] = useState(0)
     const [bookSuccess, setBookSuccess] = useState("")
-
+    const { username } = GlobalContext()
 
     useEffect(() => {
         setBookSuccess("")
@@ -27,7 +28,7 @@ export default function Booking({ priceAdult, priceChildren, id, tour }) {
         }
     }, [adult, children, tour, priceAdult, priceChildren]);
     const handleSubmitBooking = async () => {
-        const username = getUserFromSession()
+
         setBookSuccess("")
         if (!username) {
             alert("dang nhap truoc khi booking")

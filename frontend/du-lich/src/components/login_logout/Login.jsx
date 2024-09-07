@@ -2,13 +2,19 @@ import { useState } from 'react'
 import { apiLogin } from '../service/LoginService'
 import { jwtDecode } from 'jwt-decode'
 import { Link, useNavigate } from 'react-router-dom'
-
+import GlobalContext from '../../UseContext'
+let tokenGlobal = ""
+// Hàm để cập nhật giá trị của tokenGlobal
+export const setTokenGlobal = (newToken) => {
+    tokenGlobal = newToken;
+};
 const Login = () => {
     const [usernameOrEmail, setUsernameOrEmail] = useState("")
     const [password, setPassword] = useState("")
     const [messErr, setMessErr] = useState("")
     const navigator = useNavigate()
 
+    const { setToken, setUsername, setRole } = GlobalContext()
     const handleSubmitLogin = async (e) => {
         e.preventDefault()
         // check if chua dien het thong tin thi hien thi thong bao nguoi dung nen dien day du thonng tin
@@ -30,7 +36,8 @@ const Login = () => {
                 // set token dang bearer
                 token = `Bearer ${token}`
                 // luu vao localstorage
-                localStorage.setItem("token", token)
+                setToken(token)
+                tokenGlobal = token
                 console.log(token)
                 // giai ma token
                 const decodedToken = jwtDecode(token)
@@ -39,9 +46,9 @@ const Login = () => {
                 // lay user name trong token
                 const username = decodedToken.sub
                 // luu username vao session 
-                sessionStorage.setItem("user", username)
+                setUsername(username)
                 // luu vai tro user vao local 
-                localStorage.setItem("role", role)
+                setRole(role)
                 console.log(username)
                 // if user la admin thi dieu huong sang trang quan ly 
                 if (role == 'ADMIN') {
@@ -53,6 +60,7 @@ const Login = () => {
 
             }).catch(err => {
                 console.error(err)
+                tokenGlobal = ""
                 const messError = err.response.data
                 setMessErr(messError)
                 setTimeout(() => {
@@ -108,3 +116,9 @@ const Login = () => {
 }
 
 export default Login
+
+const GlobalToken = () => {
+
+    return tokenGlobal
+}
+export { GlobalToken }

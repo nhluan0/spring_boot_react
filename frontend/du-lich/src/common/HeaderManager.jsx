@@ -1,25 +1,26 @@
-import React, { useEffect, useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
-import { apiLogout, getUserFromSession, logout } from '../components/service/LoginService'
+
+import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { apiLogout } from '../components/service/LoginService'
+import GlobalContext from '../UseContext'
+import { setTokenGlobal } from '../components/login_logout/Login'
 
 const HeaderManager = () => {
-    const [user, setUser] = useState("")
+    const { username, setUsername, setRole, setToken } = GlobalContext()
+    const navigator = useNavigate()
 
-    useEffect(() => {
-        const username = getUserFromSession()
-        setUser(username)
-    }, [])
 
     const handleLogout = async () => {
         // log out
-        await apiLogout().then(
-            response => {
-                // xoa token va session 
-                logout()
-                setUser("")
-                console.log(response.data)
-            }
-        ).catch(err => {
+        await apiLogout().then(response => {
+            setToken("")
+            // xoar username 
+            setUsername("")
+            // xoa role
+            setRole("")
+            setTokenGlobal("")
+            console.log(response.data)
+            navigator("/home")
+        }).catch(err => {
             console.log(err)
         })
     }
@@ -40,13 +41,13 @@ const HeaderManager = () => {
                         </li>
                     </ul>
                     <ul className='navbar-nav ms-auto'>
-                        {user &&
+                        {username &&
                             <li className='nav-item'>
-                                <NavLink className="nav-link" to="" >{user}</NavLink>
+                                <NavLink className="nav-link" to="" >{username}</NavLink>
 
                             </li>
                         }
-                        {user &&
+                        {username &&
                             <li className='nav-item'>
                                 <NavLink className="nav-link" to="" onClick={handleLogout}>Log out</NavLink>
 

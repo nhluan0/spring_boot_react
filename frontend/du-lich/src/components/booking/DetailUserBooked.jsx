@@ -1,23 +1,24 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Header from '../home/Header'
 import HeaderBody from '../home/HeaderBody'
 import Footer from '../home/Footer'
-import { getUserFromSession } from '../service/LoginService'
+
 import { apiDeleteTourBooked, apiGetInfoUserBookedTours } from '../service/BookingService'
+import GlobalContext from '../../UseContext'
 
 export default function DetailUserBooked() {
     const [booked, setBooked] = useState([])
-    const [user, setUser] = useState("")
-
+    // const [user, setUser] = useState("")
+    const { username } = GlobalContext()
     useEffect(() => {
         getListBookedByUser()
     }, [])
 
     const getListBookedByUser = async () => {
-        const username = getUserFromSession()
+
 
         if (username) {
-            setUser(username)
+
             await apiGetInfoUserBookedTours(username).then(response => {
                 console.log(response.data)
                 setBooked(response.data)
@@ -48,8 +49,8 @@ export default function DetailUserBooked() {
             </div>
             <div className='bg-light'>
                 <div className='than-page-home p-5'>
-                    {user &&
-                        <div className='text-dark fs-3 py-2'>Thông tin Anh/Chị <i className='text-primary'>{user}</i> đã booked tour</div>
+                    {username &&
+                        <div className='text-dark fs-3 py-2'>Thông tin Anh/Chị <i className='text-primary'>{username}</i> đã booked tour</div>
                     }
                     {booked.length > 0 &&
                         <table className='table table-bordered table-responsive'>
