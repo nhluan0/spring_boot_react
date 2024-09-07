@@ -33,7 +33,7 @@ function ManagerUser() {
 
     // ham goi api get all user for first load page
     const handleApiGetAllUser = async () => {
-        console.log(getToken())
+
         await apiGetAllUserByPage().then(response => {
             console.log(response)
             setUsers(response.data.content)
