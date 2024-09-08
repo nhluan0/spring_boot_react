@@ -5,6 +5,7 @@ import HeaderDetail from './HeaderDetail'
 import Footer from '../home/Footer'
 import { FaStar } from 'react-icons/fa'
 import Booking from '../booking/Booking'
+import Comment from '../comment/Comment'
 
 export default function TourDetail() {
     const [tour, setTour] = useState({})
@@ -50,6 +51,11 @@ export default function TourDetail() {
 
                 <div className='p-4' dangerouslySetInnerHTML={{ __html: tour.description }} />
             </div>
+            {id &&
+                <div className='bg-light p-4'>
+                    <Comment id={id} />
+                </div>
+            }
 
             <Footer />
         </div>
