@@ -3,7 +3,7 @@ import {
   // apiGetAllUserByPage,
   // apiPaginateByPage,
   apiPatchById,
-  apiSearchByUserNameOrPhoneNumber,
+  apiSearchByUsernameOrPhoneNumberv2,
 } from '../service/UserService'
 import ModalAddOrUpdateUser from './ModalAddOrUpdateUser'
 import { useNavigate } from 'react-router-dom'
@@ -15,60 +15,51 @@ function ManagerUser() {
 
   const [showModalAddNewUser, setShowModalAddNewUser] = useState(false)
   const [refeshUser, setRefeshUser] = useState(true)
-
+  const [pageCount, setPageCount] = useState(0)
   // input search
   const [inputSearch, setInputSearch] = useState('')
   // hien thi loi search
   const [errorSearch, setErrorSearch] = useState('')
   // show modal update
   const [modalUpdate, setModalUpdate] = useState(false)
-
+  const [booleanSearch, setBooleanSearch] = useState(false)
+  const [searchPage, setSearchPage] = useState(0)
   const navigator = useNavigate()
 
-  // useEffect(() => {
-  //   if (refeshUser) {
-  //     handleApiGetAllUser()
-  //   }
-  // }, [refeshUser])
+  useEffect(() => {
+    // Kiểm tra xem có cần reset booleanSearch khi component mount không
+    setBooleanSearch(false)
+  }, [])
+  const searchApi = async () => {
+    const search = {
+      usernameOrPhoneNumber: inputSearch,
+    }
+    setBooleanSearch(true)
+    await apiSearchByUsernameOrPhoneNumberv2(searchPage, search)
+      .then((response) => {
+        console.log(response)
+        const arrSearch = response.data.content
 
-  // // ham goi api get all user for first load page
-  // const handleApiGetAllUser = async () => {
-  //   await apiGetAllUserByPage().then((response) => {
-  //     console.log(response)
-  //     setUsers(response.data.content)
-  //     const page = response.data.totalPages
-  //     let arrPage = []
-  //     if (page > 0) {
-  //       for (let i = 1; i <= page; i++) {
-  //         arrPage.push(i)
-  //       }
-  //     }
-  //     // setTotalPage(arrPage)
-  //   })
-  //   setRefeshUser(false)
-  // }
+        setUsers(arrSearch)
+        setPageCount(response.data.totalPages)
+        // set gia tri input search ve lai ""
+        // setInputSearch('')
+      })
+      .catch((err) => {
+        setBooleanSearch(false)
+        setErrorSearch(err.response.data)
+        console.error(err)
+        setInputSearch('')
+        setTimeout(() => {
+          setErrorSearch('')
+        }, 3000)
+      })
+  }
   // ham search
-  const handleSearch = async (e) => {
+  const handleSearch = (e) => {
     // kiem tra value input co gia tri khong va event co xay ra tren nut enter ko thi serach
     if (inputSearch && e.key == 'Enter') {
-      await apiSearchByUserNameOrPhoneNumber(inputSearch)
-        .then((response) => {
-          const arrSearch = response.data
-          if (arrSearch.length > 0) {
-            setUsers(response.data)
-            // set gia tri input search ve lai ""
-            setInputSearch('')
-            // setTotalPage([])
-          }
-        })
-        .catch((err) => {
-          setErrorSearch(err.response.data)
-          console.error(err)
-          setInputSearch('')
-          setTimeout(() => {
-            setErrorSearch('')
-          }, 3000)
-        })
+      searchApi()
     }
   }
   // show modal sua
@@ -98,39 +89,6 @@ function ManagerUser() {
       })
   }
 
-  // // ham click phan trang
-  // const handleClickPaginate = async (page) => {
-  //   await apiPaginateByPage(page)
-  //     .then((response) => {
-  //       console.log(response)
-  //       // to mau phan trang
-  //       setPaintPhantrang(page)
-  //       const userList = response.data.content
-  //       // set lai user lay duoc
-  //       setUsers(userList)
-  //     })
-  //     .catch((err) => {
-  //       console.error(err)
-  //     })
-  // }
-  // // nut next or prev phan trang click
-  // const handleNext = async (page) => {
-  //   if (page == totalPage.length) {
-  //     page = 1
-  //   } else {
-  //     page += 1
-  //   }
-  //   handleClickPaginate(page)
-  // }
-  // // nut next or prev phan trang click
-  // const handlePrev = async (page) => {
-  //   if (page == 1) {
-  //     page = totalPage.length
-  //   } else {
-  //     page -= 1
-  //   }
-  //   handleClickPaginate(page)
-  // }
   return (
     <>
       <HeaderManager />
@@ -164,7 +122,7 @@ function ManagerUser() {
                 placeholder="Search..."
                 value={inputSearch}
                 onChange={(e) => setInputSearch(e.target.value)}
-                onKeyDown={handleSearch}
+                onKeyDown={(e) => handleSearch(e)}
               />
             </div>
           </div>
@@ -176,51 +134,14 @@ function ManagerUser() {
               refeshUser={refeshUser}
               users={users}
               setUsers={setUsers}
+              pageCount={pageCount}
+              setPageCount={setPageCount}
+              booleanSearch={booleanSearch}
+              setSearchPage={setSearchPage}
+              searchApi={searchApi}
+              searchPage={searchPage}
             />
           </div>
-          {/* phan trang
-          {totalPage.length > 0 && (
-            <nav aria-label="navigation">
-              <ul className="pagination">
-                <li
-                  className="page-item"
-                  onClick={() => handlePrev(paintPhantrang)}
-                >
-                  <a className="page-link " style={{ cursor: 'pointer' }}>
-                    {'<<'}
-                  </a>
-                </li>
-
-                {totalPage.map((page) => (
-                  <li
-                    key={page}
-                    className="page-item"
-                    onClick={() => handleClickPaginate(page)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <a
-                      className={
-                        paintPhantrang === page
-                          ? 'page-link bg-info'
-                          : 'page-link '
-                      }
-                    >
-                      {page}
-                    </a>
-                  </li>
-                ))}
-
-                <li
-                  className="page-item"
-                  onClick={() => handleNext(paintPhantrang)}
-                >
-                  <a className="page-link" style={{ cursor: 'pointer' }}>
-                    {'>>'}
-                  </a>
-                </li>
-              </ul>
-            </nav>
-          )} */}
         </div>
       </main>
     </>

@@ -12,13 +12,22 @@ const PaginationUser = ({
   refeshUser,
   users,
   setUsers,
+  pageCount,
+  setPageCount,
+  booleanSearch,
+  setSearchPage,
+  searchApi,
+  searchPage,
 }) => {
-  const [pageCount, setPageCount] = useState(0)
   const [numpage, setNumpage] = useState(0)
 
   useEffect(() => {
-    handleGetUser(numpage)
-  }, [numpage, refeshUser])
+    if (booleanSearch) {
+      searchApi()
+    } else {
+      handleGetUser(numpage)
+    }
+  }, [numpage, refeshUser, searchPage, booleanSearch])
   const handleGetUser = async (page) => {
     await apiGetListUserByNumPagePaginate(page)
       .then((reponse) => {
@@ -55,7 +64,11 @@ const PaginationUser = ({
   }
   const handlePageClick = (event) => {
     console.log(event.selected)
-    setNumpage(event.selected)
+    if (booleanSearch) {
+      setSearchPage(event.selected)
+    } else {
+      setNumpage(event.selected)
+    }
   }
 
   return (

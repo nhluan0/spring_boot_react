@@ -39,7 +39,7 @@ public class SecurityConfig {
             "/booking","/booking/**","/comment/**"};
     private String[] PUBLIC_GET ={"/tours/search/**","/tours","/tours/**","/tours/price-desc"
             ,"/tour/search/**","/tour/search/date/**","/booking/**","/comment/**",
-            "/comment/tour/**","/log/complete/register"};
+            "/comment/tour/**","/log/complete/register","/users/**"};
     @Bean
     PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();

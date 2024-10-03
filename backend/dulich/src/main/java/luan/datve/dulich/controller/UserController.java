@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import luan.datve.dulich.dto.UserDto;
 import luan.datve.dulich.dto.request.RegisterRequest;
+import luan.datve.dulich.dto.request.SearchUser;
 import luan.datve.dulich.mapper.MapperRegister;
 import luan.datve.dulich.mapper.MapperUserAndUserDto;
 import luan.datve.dulich.model.Role;
@@ -182,7 +183,16 @@ public class UserController {
             return new ResponseEntity<>("ko co so phan trang nhan duoc",HttpStatus.BAD_REQUEST);
         return ResponseEntity.ok(dtoPage);
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping ("/search/{numPage}")
+    public ResponseEntity<?> searchByUsernameOrPhoneNumber(@PathVariable("numPage") int numPage,
+                                                           @RequestBody SearchUser searchUser){
+       String keySearch = searchUser.getUsernameOrPhoneNumber();
+       Page<UserDto> dtoPage = userService.searchUsernameOrPhoneNumber(numPage,keySearch,keySearch);
+       if(dtoPage.isEmpty())
+           return new ResponseEntity<>("ko tim thay gia tri search",HttpStatus.BAD_REQUEST);
+       return ResponseEntity.ok(dtoPage);
+    }
 
 
 }

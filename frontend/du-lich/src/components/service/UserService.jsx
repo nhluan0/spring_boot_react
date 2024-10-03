@@ -26,8 +26,8 @@ export const apiAddNewUser = (user) => axios.post(URL_BASE, user)
 // api get page user
 export const apiGetAllUserByPage = () => axios.get(URL_BASE)
 // api search by username or phone number
-export const apiSearchByUserNameOrPhoneNumber = (phoneOrUsername) =>
-  axios.get(`${URL_BASE}/${phoneOrUsername}`)
+// export const apiSearchByUserNameOrPhoneNumber = (phoneOrUsername) =>
+//   axios.get(`${URL_BASE}/${phoneOrUsername}`)
 // api update user
 export const apiUpdateUserById = (id, user) =>
   axios.put(`${URL_BASE}/${id}`, user)
@@ -41,3 +41,6 @@ export const apiPaginateByPage = (page) =>
 // api get user theo so phan trang
 export const apiGetListUserByNumPagePaginate = (page) =>
   axios.get(`${URL_BASE}/page/${page}`)
+// api get user theo gia tri search va phan trang
+export const apiSearchByUsernameOrPhoneNumberv2 = (page, search) =>
+  axios.post(`${URL_BASE}/search/${page}`, search)

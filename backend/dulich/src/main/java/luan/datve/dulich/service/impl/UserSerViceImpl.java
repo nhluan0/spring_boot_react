@@ -207,8 +207,25 @@ public class UserSerViceImpl implements UserService {
                 mapperUserAndUserDto.userToUserDto(user));
         return dtoPage;
     }
+    // search by price or username lay theo so trang
+    @Override
+    public Page<UserDto> searchUsernameOrPhoneNumber(int page, String username, String phoneNumber) {
+        // 1: lay PageAble theo so trang va username va sap xep theo ten dang ky tang dan
+        Pageable pageable = PageRequest.of(page,2,Sort.by("userName")
+                .ascending().and(Sort.by("phoneNumber")).descending());
+        // 2: tim danh sach theo username
+        Page<User>  users = userRepository.findByUserNameContainingOrPhoneNumberContaining(
+                username,phoneNumber,pageable);
+        // 3: kiem tra co trong khong
+        if(users.isEmpty())return Page.empty();
+        // chuyen doi sang Page<UserDto>
+        Page<UserDto> dtoPage = users.map(user->{
+            return mapperUserAndUserDto.userToUserDto(user);
+        });
+        return dtoPage;
+    }
 
-    // search by price or location
+
 
 
 }

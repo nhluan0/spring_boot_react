@@ -47,5 +47,8 @@ public interface UserService {
     // logout
     LogoutResponse logout(String token) throws ParseException, JOSEException;
 
+    // lay user de phan trang
     Page<UserDto> getListUserByNumPage(int numPage);
+    // search username or phone number de phan trang
+    Page<UserDto> searchUsernameOrPhoneNumber(int page,String username, String phoneNumber);
 }
