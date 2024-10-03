@@ -7,7 +7,8 @@ import lombok.experimental.FieldDefaults;
 
 import java.sql.Date;
 
-@Data
+@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -28,4 +29,13 @@ public class Comment {
     Date dateCreated;
     int rate;
 
+    @Override
+    public String toString() {
+        return "Comment{" +
+                "id=" + id +
+                ", comment='" + comment + '\'' +
+                ", dateCreated=" + dateCreated +
+                ", rate=" + rate +
+                '}';
+    }
 }

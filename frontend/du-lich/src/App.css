@@ -1,35 +1,36 @@
 /* Modal add new user */
 .modal-background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .main-modal {
-    background-color: white;
-    box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.3);
-    padding: 10px;
-    border-radius: 5px;
+  background-color: white;
+  box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.3);
+  padding: 10px;
+  border-radius: 5px;
 }
 
 .x_close:hover {
-    opacity: 0.5;
+  opacity: 0.5;
 }
 
 /* css pagination react */
 /* PaginationComponent.css */
 
 .pagination {
-    display: flex;
-    list-style-type: none;
-    padding: 0;
-    justify-content: center;
+  display: flex;
+  list-style-type: none;
+  padding: 0;
+  justify-content: center;
 }
 
 /* .page-item {
@@ -60,92 +61,87 @@
 } */
 /* ap dung cho anh cua ReactQuill */
 p img {
-    display: block;
-    width: 100%;
+  display: block;
+  width: 100%;
 }
 
 /* page - home */
 .top-home-page {
-    background-image: url("./images/anh-bia-page-home.jpg");
-    height: 500px;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-origin: content-box;
-    position: relative;
-
+  background-image: url('./images/anh-bia-page-home.jpg');
+  height: 500px;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-origin: content-box;
+  position: relative;
 }
 
 .head {
-    position: absolute;
-    left: 0;
-    right: 0;
-    z-index: 1;
-
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 1;
 }
 
-.head>a {
-    margin-left: 40px;
-    cursor: pointer;
-    font-size: 25px !important;
+.head > a {
+  margin-left: 40px;
+  cursor: pointer;
+  font-size: 25px !important;
 }
-
-
 
 .head a {
-    color: white;
+  color: white;
 
-    font-size: larger;
+  font-size: larger;
 }
 
 .btn-outline-dark {
-    color: white !important;
-    border-color: white !important;
-
+  color: white !important;
+  border-color: white !important;
 }
 
 .content-head {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    bottom: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  bottom: 0;
 }
 
 /* slid tour page home  */
 .silde-tour {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    justify-content: center;
-    align-items: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  justify-content: center;
+  align-items: center;
 }
 
 /* phan css search */
 .location {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
-@media (max-width:1230px) {
-    .silde-tour {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-    }
+@media (max-width: 1230px) {
+  .silde-tour {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
 }
 
-@media (max-width:900px) {
-    .silde-tour {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-    }
+@media (max-width: 900px) {
+  .silde-tour {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
-@media (max-width:700px) {
-    .silde-tour {
-        display: grid;
-        grid-template-columns: 1fr;
-    }
+@media (max-width: 700px) {
+  .silde-tour {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
 }
 
 /* phan drop down */
@@ -158,3 +154,59 @@ p img {
 
 
 } */
+.spinner {
+  animation: spin 1s linear infinite; /* 1 second for full rotation */
+}
+
+/* Keyframes to make the spinner rotate */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+/* input password */
+.input_pw {
+  /* position: relative; */
+  display: flex;
+  align-items: center;
+  border: 1px solid #dee2e6;
+  border-radius: 7px;
+}
+.input_pw input {
+  outline: none;
+  border: none;
+}
+
+.icon_eye {
+  position: relative;
+  right: 0;
+  cursor: pointer;
+  margin-right: 1rem;
+  font-size: 1.3rem;
+  z-index: 1;
+}
+.icon_eye:hover {
+  opacity: 0.5;
+}
+.form-control:focus {
+  border-color: #86b7fe;
+  outline: 0;
+  box-shadow: none !important;
+}
+.input_pw:hover {
+  border-color: #86b7fe;
+  outline: 0;
+}
+select:focus {
+  box-shadow: none !important;
+}
+.page-link {
+  box-shadow: none !important;
+}
+.active > .page-link,
+.page-link.active {
+  z-index: 0 !important;
+}

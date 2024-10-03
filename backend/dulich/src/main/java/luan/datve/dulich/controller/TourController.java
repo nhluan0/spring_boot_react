@@ -6,6 +6,7 @@ import luan.datve.dulich.dto.TourDto;
 import luan.datve.dulich.dto.TourModalAttribute;
 import luan.datve.dulich.exception.ValidTourException;
 import luan.datve.dulich.service.TourService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,6 +20,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -88,10 +90,18 @@ public class TourController {
     @GetMapping("/price-desc")
     public  ResponseEntity<?> getTenTourByPriceDesc(){
         List<TourDto>  tourDtos = tourService.getTenTourByDecreasePrice();
+
         if(tourDtos == null) return new ResponseEntity<>("Tour that bai",HttpStatus.BAD_REQUEST);
         return ResponseEntity.ok(tourDtos);
     }
 
-
+    // lay tour theo phan trang , o day gioi han 4 san pham
+    @GetMapping("/page/{numPage}")
+    public ResponseEntity<?> getListTourByNumPage(@PathVariable("numPage") int numPage){
+        Page<TourDto> tourDtos = tourService.getListTourByPaginate(numPage);
+        if(tourDtos.isEmpty())
+            return new ResponseEntity<>("Page ko ton tai",HttpStatus.BAD_REQUEST);
+        return ResponseEntity.ok(tourDtos);
+    }
 
 }

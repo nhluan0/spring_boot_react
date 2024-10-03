@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import luan.datve.dulich.model.Booking;
+import luan.datve.dulich.model.Comment;
+import luan.datve.dulich.model.Tour;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Date;
@@ -30,9 +32,11 @@ public class TourDto {
     private Boolean isLock = false;
     private String priceAdult;
     private String priceChildren;
-//    private List<Booking> bookingList;
+    private int rate;
 
-    public TourDto(Long id, String name, byte[] image, String description, Date start_date, Date end_date, String price, String address, Boolean isLock) {
+
+
+    public TourDto(Long id, String name, byte[] image, String description, Date start_date, Date end_date, String price, String address, Boolean isLock,int rate) {
         this.id = id;
         this.name = name;
         this.image = image != null ? Base64.getEncoder().encodeToString(image):null;
@@ -42,6 +46,8 @@ public class TourDto {
         this.price = price;
         this.address = address;
         this.isLock = isLock;
+        this.rate = rate;
+
 
     }
 

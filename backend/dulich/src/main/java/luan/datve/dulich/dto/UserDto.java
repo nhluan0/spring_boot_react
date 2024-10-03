@@ -3,6 +3,7 @@ package luan.datve.dulich.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,7 +30,8 @@ public class UserDto {
     private String phoneNumber;
     @NotBlank(message = "Địa chỉ không bỏ trống")
     private String address;
-    @NotBlank(message = "Chọn vai trò người dùng")
+
     private Boolean isLock;
+    @NotBlank(message = "Chọn vai trò người dùng")
     private String roles;
 }

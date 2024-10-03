@@ -32,4 +32,5 @@ public class TourSearchPublicController {
         return ResponseEntity.ok(tourDtos);
     }
 
+
 }

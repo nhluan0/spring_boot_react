@@ -47,5 +47,5 @@ public interface UserService {
     // logout
     LogoutResponse logout(String token) throws ParseException, JOSEException;
 
-
+    Page<UserDto> getListUserByNumPage(int numPage);
 }

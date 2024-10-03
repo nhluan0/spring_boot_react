@@ -1,6 +1,9 @@
 package luan.datve.dulich.repository;
 
+import luan.datve.dulich.dto.TourDto;
 import luan.datve.dulich.model.Tour;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -19,4 +22,6 @@ public interface TourRepository extends JpaRepository<Tour,Long> {
 
 
     List<Tour> findByStartDate(Date date);
+    Page<Tour> findAll(Pageable pageable);
+
 }

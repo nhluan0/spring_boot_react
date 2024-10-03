@@ -21,10 +21,7 @@ import luan.datve.dulich.model.User;
 import luan.datve.dulich.repository.LogoutTokenRepository;
 import luan.datve.dulich.repository.UserRepository;
 import luan.datve.dulich.service.UserService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -48,8 +45,10 @@ public class UserSerViceImpl implements UserService {
     // add new user
     @Override
     public UserDto addNew(UserDto userDto) {
+        System.out.println(userDto.getRoles());
         User user = mapperUserAndUserDto.userDtoToUser(userDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+
         User savedUser = userRepository.save(user);
         return mapperUserAndUserDto.userToUserDto(savedUser);
     }
@@ -134,8 +133,10 @@ public class UserSerViceImpl implements UserService {
         Optional<User> user = userRepository.findById(id);
         if(!user.isPresent())return null;
         User user1 = user.get();
-        if(user1.getRoles().getRole().equalsIgnoreCase("ROLE_ADMIN")){
-            return null;
+        if(user1.getRoles().getRole().equalsIgnoreCase("ADMIN")){
+            UserDto userDto = new UserDto();
+            userDto.setRoles("ADMIN");
+            return userDto;
         }
         user1.setIsLock(!user1.getIsLock());
         // luu vao database
@@ -190,6 +191,21 @@ public class UserSerViceImpl implements UserService {
                 .mess("logout thanh cong")
                 .build();
         return logoutResponse;
+    }
+
+    // lay page theo so trang truyen len, gioi han 5 phan tu hien thi moi page
+    @Override
+    public Page<UserDto> getListUserByNumPage(int numPage) {
+        // 1: lay PageAble theo so trang va sap xep theo ten dang ky tang dan
+        Pageable pageable = PageRequest.of(numPage,5,Sort.by("userName").ascending());
+        // 2: lay list user theo numPage
+        Page<User> users = userRepository.findAll(pageable);
+        // 3: kiem tra co trong khong
+        if(users.isEmpty()) return Page.empty();
+        // 4: chuyen doi Page<User> thanh Page<UserDto>
+        Page<UserDto> dtoPage = users.map(user->
+                mapperUserAndUserDto.userToUserDto(user));
+        return dtoPage;
     }
 
     // search by price or location

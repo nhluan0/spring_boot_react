@@ -6,9 +6,7 @@ import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.extern.apachecommons.CommonsLog;
 import luan.datve.dulich.exception.ResourceNotExceptionFound;
 
@@ -19,9 +17,10 @@ import java.util.List;
 
 @Entity
 @Table(name = "tour")
-@Data
+@Setter
+@Getter
 @AllArgsConstructor
-@NoArgsConstructor
+
 public class Tour {
     @Id
     @Column(name = "id")
@@ -59,14 +58,19 @@ public class Tour {
     @Column(name = "price_children")
     private String priceChildren;
 
+    @OneToMany(mappedBy = "tour",fetch = FetchType.LAZY,cascade = {
+           CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH
+    })
+    private  List<Comment> comments;
+
 //    @OneToMany(mappedBy = "tour",fetch = FetchType.LAZY,cascade = {
 //            CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH
 //    })
 //    private List<Booking> bookingList;
 
-//    public Tour() {
-//        this.bookingList = new ArrayList<>();
-//    }
+    public Tour() {
+        this.comments = new ArrayList<>();
+    }
 
     // add 1 Booking
 //    public void addNewBooking(Booking booking){
@@ -81,4 +85,21 @@ public class Tour {
 //        booking.setTour(this);
 //    }
 
+    @Override
+    public String toString() {
+        return "Tour{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", image=" + image +
+                ", description='" + description + '\'' +
+                ", startDate=" + startDate +
+                ", end_date=" + end_date +
+                ", price='" + price + '\'' +
+                ", address='" + address + '\'' +
+                ", isLock=" + isLock +
+                ", priceAdult='" + priceAdult + '\'' +
+                ", priceChildren='" + priceChildren + '\'' +
+                ", comments=" + comments +
+                '}';
+    }
 }

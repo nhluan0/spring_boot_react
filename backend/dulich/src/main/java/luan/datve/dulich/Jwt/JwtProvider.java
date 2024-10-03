@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 
 import java.text.ParseException;
+import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
@@ -93,6 +94,52 @@ public class JwtProvider {
 
         return signedJWT;
 
+    }
+
+    // verifing token
+    public Boolean verifyToken(String token) throws ParseException, JOSEException {
+        // 1: parse token
+        SignedJWT jwt = SignedJWT.parse(token);
+        // 2: verify signed
+        JWSVerifier jwsVerifier = new MACVerifier(jwtSecret.getBytes());
+        Boolean isvalidateSigned = jwt.verify(jwsVerifier);
+        // check signed invalidate
+        if(!isvalidateSigned)return false;
+        // 3: get claim
+        JWTClaimsSet claimsSet = jwt.getJWTClaimsSet();
+        // 4: get expired
+        Instant expired = claimsSet.getExpirationTime().toInstant();
+        return expired.isAfter(Instant.now());
+    }
+    // set expiration time for a token given
+    public String generateTokenByUserRegistion(User user,Date expirationDate) throws JOSEException {
+        // 1: create header
+        JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
+        // 2: set claim
+        JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+                .issuer("luan")
+                .subject(user.getUserName())
+                .jwtID(user.getId().toString())
+                .issueTime(new Date())
+                .expirationTime(expirationDate)
+                .build();
+        // 3: set signature
+        SignedJWT signedJWT = new SignedJWT(header,claimsSet);
+        // 4: encode signature
+        MACSigner  macSigner = new MACSigner(jwtSecret.getBytes());
+        // 5: assign signed to jwt
+        signedJWT.sign(macSigner);
+        return signedJWT.serialize();
+    }
+    // get user name from token
+    public String getUsernameFromToken(String token) throws ParseException {
+        // 1: parse token
+        SignedJWT jwt = SignedJWT.parse(token);
+        // 2: get claimsSet
+        JWTClaimsSet claimsSet = jwt.getJWTClaimsSet();
+        // 3: get username
+        String username = claimsSet.getSubject();
+        return username;
     }
 
 }

@@ -4,9 +4,15 @@ import lombok.AllArgsConstructor;
 import luan.datve.dulich.dto.TourDto;
 import luan.datve.dulich.exception.ResourceNotExceptionFound;
 import luan.datve.dulich.mapper.MapperTourAndTourDto;
+import luan.datve.dulich.model.Comment;
 import luan.datve.dulich.model.Tour;
+import luan.datve.dulich.repository.CommentRepository;
 import luan.datve.dulich.repository.TourRepository;
 import luan.datve.dulich.service.TourService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,6 +32,7 @@ import java.util.stream.Collectors;
 public class TourServiceImpl implements TourService {
     private TourRepository tourRepository;
     private MapperTourAndTourDto mapperTourAndTourDto;
+    private CommentRepository commentRepository;
 
     // add new Tour
     @Override
@@ -55,7 +62,16 @@ public class TourServiceImpl implements TourService {
     public TourDto getById(Long id) throws SQLException {
         Tour tour = tourRepository.findById(id)
                 .orElseThrow(()->new ResourceNotExceptionFound("id ko ton tai"));
+        List<Comment> comments = commentRepository.findByTourId(tour.getId());
+        int sum = comments.stream()
+                .mapToInt(Comment::getRate)
+                .sum();
+        int rate = 0;
+        if(comments.size() !=0){
+            rate = (int) Math.floor(sum/comments.size());
+        }
         TourDto tourDto = mapperTourAndTourDto.tourToTourDto(tour);
+        tourDto.setRate(rate);
         return tourDto;
     }
 
@@ -85,7 +101,10 @@ public class TourServiceImpl implements TourService {
         if(tours.isEmpty())return null;
         List<TourDto> tourDtos = tours.stream().map(tour->{
             try {
-                return mapperTourAndTourDto.tourToTourDto(tour);
+
+                TourDto tourDto = mapperTourAndTourDto.tourToTourDto(tour);
+              
+                return tourDto;
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -127,8 +146,10 @@ public class TourServiceImpl implements TourService {
         List<Tour> tours = tourRepository.findTenTourByPriceDecrease();
         List<TourDto> tourDtos = tours.stream().map((tour)-> {
             try {
+
                 var tourDto = mapperTourAndTourDto.tourToTourDto(tour);
                 tourDto.setDescription(""); // set phan mo ta de giam luu luu luong truyen tai
+
                 return tourDto;
             } catch (SQLException e) {
                 throw new ResourceNotExceptionFound("Error chuyen doi sql");
@@ -145,7 +166,10 @@ public class TourServiceImpl implements TourService {
         if(tours != null || tours.size() > 0){
             tourDtos = tours.stream().map(tour -> {
                 try {
-                    return mapperTourAndTourDto.tourToTourDto(tour);
+
+                    TourDto tourDto = mapperTourAndTourDto.tourToTourDto(tour);
+
+                    return tourDto;
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
@@ -164,13 +188,37 @@ public class TourServiceImpl implements TourService {
             tourDtos = tour.stream().map(
                     t-> {
                         try {
-                            return mapperTourAndTourDto.tourToTourDto(t);
+
+                            TourDto tourDto = mapperTourAndTourDto.tourToTourDto(t);
+
+                            return tourDto;
                         } catch (SQLException e) {
                             throw new RuntimeException(e);
                         }
                     }
             ).collect(Collectors.toList());
         }
+        return tourDtos;
+    }
+
+    // search by number page pass into
+    @Override
+    public Page<TourDto> getListTourByPaginate(int numPage) {
+        // tim theo trang va theo gia giam dan va ten tang dan
+        Pageable searchTourByPriceAndSortByName = PageRequest.of(numPage,4,
+                Sort.by("price").descending().and(Sort.by("name").ascending()));
+        // lay ket qua
+        Page<Tour> tours = tourRepository.findAll(searchTourByPriceAndSortByName);
+        if (tours.isEmpty())return Page.empty();
+
+
+        Page<TourDto> tourDtos = tours.map(tour -> {
+            try {
+                return mapperTourAndTourDto.tourToTourDto(tour);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
         return tourDtos;
     }
 }

@@ -155,7 +155,7 @@ public class UserController {
         if (userDto == null) {
             return new ResponseEntity<>("User does not exist or admin can't delete", HttpStatus.BAD_REQUEST);
         }
-        if(userDto.getRoles().equalsIgnoreCase("ROLE_ADMIN")){
+        if(userDto.getRoles().equalsIgnoreCase("ADMIN")){
             return new ResponseEntity<>("ADMIN khong the Xoa", HttpStatus.BAD_REQUEST);
         }
         return ResponseEntity.ok(userDto);
@@ -173,6 +173,15 @@ public class UserController {
         return ResponseEntity.ok(userPage);
     }
 
+    // lay user theo so trang nhan duoc
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/page/{numPage}")
+    public ResponseEntity<?> getListUserByNumPage(@PathVariable("numPage") int numPage){
+        Page<UserDto> dtoPage = userService.getListUserByNumPage(numPage);
+        if(dtoPage.isEmpty())
+            return new ResponseEntity<>("ko co so phan trang nhan duoc",HttpStatus.BAD_REQUEST);
+        return ResponseEntity.ok(dtoPage);
+    }
 
 
 

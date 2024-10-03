@@ -3,6 +3,8 @@ package luan.datve.dulich.service;
 import luan.datve.dulich.dto.TourDto;
 import luan.datve.dulich.exception.ResourceNotExceptionFound;
 import luan.datve.dulich.model.Tour;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.sql.rowset.serial.SerialBlob;
@@ -36,4 +38,5 @@ public interface TourService {
      List<TourDto> searchByLocationOrPrice(String location, String price);
 
      List<TourDto> searchByStartDate(Date date);
+     Page<TourDto> getListTourByPaginate(int numPage);
 }

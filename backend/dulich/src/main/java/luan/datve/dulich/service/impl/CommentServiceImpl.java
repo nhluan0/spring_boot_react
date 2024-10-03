@@ -56,7 +56,7 @@ public class CommentServiceImpl implements CommentService {
     // lay tat ca comment
     @Override
     public List<CommentResponse> getAllComment() {
-        return commentRepository.findAll().stream().map((comment)->{
+        return commentRepository.findAllByOrderByDateCreatedDesc().stream().map((comment)->{
             return mapperComment.toCommentResponse(comment);
         }).collect(Collectors.toList());
     }
@@ -65,7 +65,7 @@ public class CommentServiceImpl implements CommentService {
     // get comment by tour id
     @Override
     public List<CommentResponse> getCommentByTourId(Long id) {
-        return commentRepository.findByTourId(id).stream().map(comment ->{
+        return commentRepository.findByTourIdOrderByDateCreatedDesc(id).stream().map(comment ->{
             return mapperComment.toCommentResponse(comment);
         }).collect(Collectors.toList());
     }

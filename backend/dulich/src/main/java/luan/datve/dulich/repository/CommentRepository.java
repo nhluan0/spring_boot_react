@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment,Long> {
     List<Comment> findByTourId(Long id);
+    List<Comment> findByTourIdOrderByDateCreatedDesc(Long id);
+    List<Comment> findAllByOrderByDateCreatedDesc();
 }

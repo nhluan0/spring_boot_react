@@ -102,6 +102,7 @@ export default function Comment({ id }) {
             <textarea className='form-control' style={{ height: "250px" }}
                 value={commentRequest}
                 onChange={(e) => setCommentRequest(e.target.value)}
+                placeholder="Nhập nội dung bình luận của bạn..."
             ></textarea>
             <div className='d-grid my-2'>
                 <button className='btn btn-danger btn-lg'
@@ -110,6 +111,6 @@ export default function Comment({ id }) {
             </div>
 
 
-        </div>
+        </div >
     )
 }
