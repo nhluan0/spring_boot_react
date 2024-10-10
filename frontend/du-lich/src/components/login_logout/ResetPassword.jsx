@@ -68,7 +68,7 @@ const ResetPassword = () => {
       </div>
       <div className=" bg-light vh-100 position-relative">
         <div className="card col-12 col-md-6 position-absolute top-50 start-50 translate-middle p-5">
-          <h1 className="text-center text-danger">Đổi mật khẩu</h1>
+          <h1 className="text-center text-danger">Quên mật khẩu</h1>
           {success && <div className="alert alert-success">{success}</div>}
           {err && <div className="alert alert-danger">{err}</div>}
           <form onSubmit={handleResetPassword}>
