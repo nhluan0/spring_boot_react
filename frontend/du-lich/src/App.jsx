@@ -14,6 +14,7 @@ import DetailUserBooked from './components/booking/DetailUserBooked'
 import Tour from './components/tour/Tour'
 import ForgetPassword from './components/login_logout/ForgetPassword'
 import ChangPassword from './components/login_logout/ChangPassword'
+import ResetPassword from './components/login_logout/ResetPassword'
 
 function App() {
   // const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
@@ -57,6 +58,8 @@ function App() {
         <Route path="/log/password/forget" element={<ForgetPassword />}></Route>
         {/* change password */}
         <Route path="/log/password/change" element={<ChangPassword />}></Route>
+        {/* resetpasword */}
+        <Route path="/resetpw" element={<ResetPassword />}></Route>
       </Routes>
     </BrowserRouter>
   )

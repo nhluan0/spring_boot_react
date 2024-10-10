@@ -7,6 +7,7 @@ import luan.datve.dulich.dto.UserDto;
 import luan.datve.dulich.dto.request.ChangePassword;
 import luan.datve.dulich.dto.request.ForgetPassword;
 import luan.datve.dulich.dto.request.LoginRequest;
+import luan.datve.dulich.dto.request.ResetPassword;
 import luan.datve.dulich.dto.response.LoginResponse;
 import luan.datve.dulich.dto.response.LogoutResponse;
 import luan.datve.dulich.model.Tour;
@@ -56,6 +57,8 @@ public interface UserService {
     Page<UserDto> searchUsernameOrPhoneNumber(int page,String username, String phoneNumber);
     // change password
     String changePassword(ChangePassword changePassword);
-    // forget password
-    String forgetPassword(ForgetPassword forgetPassword) throws MessagingException;
+    // send an email for forget password
+    String forgetPassword(ForgetPassword forgetPassword) throws MessagingException, JOSEException;
+    // handle forget password
+    String handleForgetPassword(String token , ResetPassword resetPassword) throws ParseException, JOSEException;
 }

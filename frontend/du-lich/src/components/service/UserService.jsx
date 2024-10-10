@@ -47,3 +47,9 @@ export const apiSearchByUsernameOrPhoneNumberv2 = (page, search) =>
 // api change password
 export const apiChangePassword = (user) =>
   axios.put(`${URL_BASE}/change/pw`, user)
+// api forget password
+export const apiForgetPassword = (forgetPassword) =>
+  axios.post(`${URL_BASE}/forget/pw`, forgetPassword)
+// api reset password
+export const apiResetPassword = (token, resetPassword) =>
+  axios.post(`${URL_BASE}/reset/pw?token=` + token, resetPassword)

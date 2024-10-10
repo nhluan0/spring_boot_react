@@ -1,6 +1,7 @@
 package luan.datve.dulich.service.impl;
 
 import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.RemoteKeySourceException;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import jakarta.mail.MessagingException;
@@ -14,6 +15,7 @@ import luan.datve.dulich.dto.UserDto;
 import luan.datve.dulich.dto.request.ChangePassword;
 import luan.datve.dulich.dto.request.ForgetPassword;
 import luan.datve.dulich.dto.request.LoginRequest;
+import luan.datve.dulich.dto.request.ResetPassword;
 import luan.datve.dulich.dto.response.LoginResponse;
 import luan.datve.dulich.dto.response.LogoutResponse;
 import luan.datve.dulich.exception.ResourceNotExceptionFound;
@@ -250,34 +252,58 @@ public class UserSerViceImpl implements UserService {
         return "update success new password for user";
     }
 
-    // forgetPassword
+    // send an api for forgetPassword
     @Override
-    public String forgetPassword(ForgetPassword forgetPassword) throws MessagingException {
+    public String forgetPassword(ForgetPassword forgetPassword) throws MessagingException, JOSEException {
         // 1: get user by username or password
         User user = userRepository.findByUserNameOrEmail(
                 forgetPassword.getUsernameOrEmail(),forgetPassword.getUsernameOrEmail());
         // 2: check user has null
         if(user == null)
             throw new ResourceNotExceptionFound("Username or email given not existed");
-        // 3: create random password
-        String randomPw = String.valueOf(UUID.randomUUID());
-        System.out.println("mat khau moi : "+ randomPw);
-        // 4: encoder new password
-        String newPw = passwordEncoder.encode(randomPw);
-        // 6: set new password to user
-        user.setPassword(newPw);
-        // 7: saved to database
+        // 3: user exist, generate a token with expired on 5 minute
+         Date expiredToken = new Date(System.currentTimeMillis()+60*1000*5);
+         String token = jwtProvider.generateTokenByUserRegistion(user,expiredToken);
+
+
+        // 4: set subject mail
+        String subjectMail = "Mail xác nhận quên mật khẩu";
+        // 5: set body
+        String body = "<h1>Ban đã yêu cầu quên mật khẩu, nếu là bạn vui lòng nhấn vào liên kết dưới để cài mật khẩu mởi</h1>" +
+                "<a href='http://localhost:5173/resetpw?token="+token+"' > Link xác nhận thay đổi mật khẩu mới</a>";
+        // 6: send email
+        mailService.sendMail(user.getEmail(),subjectMail,body);
+        return "Chung toi da gui cho ban mot email xac thuc, vui long xac thuc email de tiep tuc";
+    }
+   // handle forget password
+    @Override
+    public String handleForgetPassword(String token, ResetPassword resetPassword) throws ParseException, JOSEException {
+        // 1: valid expired token
+        Boolean isExpiredToken = jwtProvider.verifyToken(token);
+        if(!isExpiredToken){
+            throw new ResourceNotExceptionFound("Ma token da het hieu luc");
+        }
+        // 2: token still valid
+        // get username in token
+        String usernameOrEmail = jwtProvider.getUsernameFromToken(token);
+        // 3: compare this usernameOrEmail with usernameOrEmail got from ForgetPassword
+        if(!usernameOrEmail.equals(resetPassword.getUsernameOrEmail()) ){
+            throw new ResourceNotExceptionFound("Username or email ko hop le");
+        }
+        // 4: check password and rePassword has match
+        if(!resetPassword.getPassword().equals(resetPassword.getRePassword())){
+            throw new ResourceNotExceptionFound("Password moi ko trung nhau, vui long nhap lai");
+        }
+        // 5: get user by usernameOrEmail
+        User user = userRepository.findByUserNameOrEmail(resetPassword.getUsernameOrEmail(),resetPassword.getUsernameOrEmail());
+        // 6: encoder password
+        String encoderPassword = passwordEncoder.encode(resetPassword.getPassword());
+        // 7:set new password
+        user.setPassword(encoderPassword);
+        // 8: saved to database
         User savedUser = userRepository.save(user);
-        // 9: get email user
-        String email = savedUser.getEmail();
-        // 10: set subject mail
-        String subjectMail = "Mat Khau moi cua ban!";
-        // 11: set body
-        String body = "<h1>Ban da thay doi mat khau hien tai</h1>" +
-                "<p> Mat khau moi cua ban la: "+ randomPw+"</p>";
-        // 12: send email
-        mailService.sendMail(email,subjectMail,body);
-        return "change password success!";
+
+        return "Thay doi mat khau thanh cong vui long quay lai trang login";
     }
 
 

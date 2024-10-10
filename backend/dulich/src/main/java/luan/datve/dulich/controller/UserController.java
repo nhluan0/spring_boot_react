@@ -1,11 +1,11 @@
 package luan.datve.dulich.controller;
 
+import com.nimbusds.jose.JOSEException;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import luan.datve.dulich.dto.UserDto;
-import luan.datve.dulich.dto.request.ChangePassword;
-import luan.datve.dulich.dto.request.RegisterRequest;
-import luan.datve.dulich.dto.request.SearchUser;
+import luan.datve.dulich.dto.request.*;
 import luan.datve.dulich.mapper.MapperRegister;
 import luan.datve.dulich.mapper.MapperUserAndUserDto;
 import luan.datve.dulich.model.Role;
@@ -22,6 +22,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.*;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -199,6 +201,19 @@ public class UserController {
     public ResponseEntity<?> changePassword(@RequestBody ChangePassword changePassword){
         String s = userService.changePassword(changePassword);
         return  ResponseEntity.ok(s);
+    }
+    // send email for a request forget password
+    @PostMapping("/forget/pw")
+    public ResponseEntity<?> sendAnEmailValidForgetPassword(@RequestBody ForgetPassword forgetPassword) throws MessagingException, JOSEException {
+        String result = userService.forgetPassword(forgetPassword);
+        return  ResponseEntity.ok(result);
+    }
+    // handle reset password
+    @PostMapping("/reset/pw")
+    public ResponseEntity<?> handleResetPassword(@RequestParam("token") String token,
+                                                 @RequestBody ResetPassword resetPassword) throws ParseException, JOSEException {
+        String result = userService.handleForgetPassword(token,resetPassword);
+        return  ResponseEntity.ok(result);
     }
 
 }

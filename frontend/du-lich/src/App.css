@@ -216,3 +216,8 @@ select:focus {
 .cursor-icon:hover {
   opacity: 0.5;
 }
+@media (max-width: 992px) {
+  .nav-item {
+    padding-left: 2.5rem !important;
+  }
+}

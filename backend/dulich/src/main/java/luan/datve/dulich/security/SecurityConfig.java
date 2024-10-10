@@ -36,7 +36,7 @@ public class SecurityConfig {
     @Value("${jwt.secret}")
     private String jwtSecret;
     private String[] PUBLIC_POST ={"/log/login","/log/logout","/log/dang-ky",
-            "/booking","/booking/**","/comment/**"};
+            "/booking","/booking/**","/comment/**","/users/forget/pw","/users/reset/pw"};
     private String[] PUBLIC_GET ={"/tours/search/**","/tours","/tours/**","/tours/price-desc"
             ,"/tour/search/**","/tour/search/date/**","/booking/**","/comment/**",
             "/comment/tour/**","/log/complete/register","/users/**"};

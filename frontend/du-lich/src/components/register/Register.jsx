@@ -3,8 +3,8 @@ import { apiRegisterUser } from '../service/RegisterNewUserService'
 import { Link } from 'react-router-dom'
 import Header from '../home/Header'
 import { CgSpinner } from 'react-icons/cg'
-import { IoEyeOutline } from 'react-icons/io5'
-import { FaRegEyeSlash } from 'react-icons/fa'
+import { IoMdEye } from 'react-icons/io'
+import { IoIosEyeOff } from 'react-icons/io'
 
 const Register = () => {
   const [email, setEmail] = useState('')
@@ -16,8 +16,9 @@ const Register = () => {
   const [address, setAddress] = useState('')
   const [messSuccess, setMessSuccess] = useState('')
   const [loading, setLoading] = useState(false)
-  const [show, setShow] = useState(true)
-  const [show2, setShow2] = useState(true)
+
+  const [newPw, setNewPw] = useState(false)
+  const [reNewPw, setReNewPw] = useState(false)
   const refInput1 = useRef()
   const refInput2 = useRef()
 
@@ -86,33 +87,14 @@ const Register = () => {
         }, [10000])
       })
   }
-  // click vao mat
-  const handleShowPassword = (event) => {
-    const currentId = event.target.id // Lấy id của phần tử mà sự kiện xảy ra
-    console.log(currentId)
 
-    if (currentId === 'eye1') {
-      setShow(!show)
-      refInput1.current.type = show ? 'text' : 'password' // Chuyển đổi giữa 'text' và 'password'
-    }
-    if (currentId === 'eye2') {
-      setShow2(!show2)
-      refInput2.current.type = show2 ? 'text' : 'password' // Chuyển đổi giữa 'text' và 'password'
+  const handleHiddenShow = (type) => {
+    if (type == 'newPw') {
+      setNewPw(!newPw)
+    } else if (type == 'reNewPw') {
+      setReNewPw(!reNewPw)
     }
   }
-  const handleHiddenPassword = (event) => {
-    const currentId = event.target.id // Lấy id của phần tử mà sự kiện xảy ra
-    console.log(currentId)
-    if (currentId == 'eye_1') {
-      setShow(!show)
-      refInput1.current.type = show ? 'text' : 'password' // Chuyển đổi giữa 'text' và 'password'
-    }
-    if (currentId == 'eye_2') {
-      setShow2(!show2)
-      refInput2.current.type = show2 ? 'text' : 'password' // Chuyển đổi giữa 'text' và 'password'
-    }
-  }
-
   return (
     <div className="container-lg bg-light">
       <div className="bg-info">
@@ -189,27 +171,25 @@ const Register = () => {
               <label htmlFor="password" className="form-label">
                 Mật khẩu
               </label>
-              <div className="input_pw">
+              <div className="position-relative">
                 <input
                   className="form-control"
                   id="password"
                   placeholder="Mật khẩu"
-                  type="password"
+                  type={newPw ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   ref={refInput1}
                 ></input>
-                {show ? (
-                  <IoEyeOutline
-                    className="icon_eye"
-                    onClick={handleShowPassword}
-                    id="eye1"
+                {newPw ? (
+                  <IoIosEyeOff
+                    className="cursor-icon position-absolute top-50 end-0 translate-middle mx-1"
+                    onClick={() => handleHiddenShow('newPw')}
                   />
                 ) : (
-                  <FaRegEyeSlash
-                    className="icon_eye"
-                    onClick={handleHiddenPassword}
-                    id="eye_1"
+                  <IoMdEye
+                    className="cursor-icon position-absolute top-50 end-0 translate-middle mx-1"
+                    onClick={() => handleHiddenShow('newPw')}
                   />
                 )}
               </div>
@@ -220,27 +200,25 @@ const Register = () => {
               <label htmlFor="repw" className="form-label">
                 Nhập lại mật khẩu
               </label>
-              <div className="input_pw">
+              <div className="position-relative">
                 <input
                   className="form-control"
                   id="repw"
                   placeholder="Nhập lại mật khẩu"
-                  type="password"
+                  type={reNewPw ? 'text' : 'password'}
                   value={rePassword}
                   onChange={(e) => setRePassword(e.target.value)}
                   ref={refInput2}
                 ></input>
-                {show2 ? (
-                  <IoEyeOutline
-                    className="icon_eye"
-                    onClick={handleShowPassword}
-                    id="eye2"
+                {reNewPw ? (
+                  <IoIosEyeOff
+                    className="cursor-icon position-absolute top-50 end-0 translate-middle mx-1 "
+                    onClick={() => handleHiddenShow('reNewPw')}
                   />
                 ) : (
-                  <FaRegEyeSlash
-                    className="icon_eye"
-                    onClick={handleHiddenPassword}
-                    id="eye_2"
+                  <IoMdEye
+                    className=" cursor-icon position-absolute top-50 end-0 translate-middle mx-1 "
+                    onClick={() => handleHiddenShow('reNewPw')}
                   />
                 )}
               </div>
