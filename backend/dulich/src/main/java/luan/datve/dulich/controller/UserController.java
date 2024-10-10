@@ -3,6 +3,7 @@ package luan.datve.dulich.controller;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import luan.datve.dulich.dto.UserDto;
+import luan.datve.dulich.dto.request.ChangePassword;
 import luan.datve.dulich.dto.request.RegisterRequest;
 import luan.datve.dulich.dto.request.SearchUser;
 import luan.datve.dulich.mapper.MapperRegister;
@@ -193,6 +194,11 @@ public class UserController {
            return new ResponseEntity<>("ko tim thay gia tri search",HttpStatus.BAD_REQUEST);
        return ResponseEntity.ok(dtoPage);
     }
-
+    // change password
+    @PutMapping("/change/pw")
+    public ResponseEntity<?> changePassword(@RequestBody ChangePassword changePassword){
+        String s = userService.changePassword(changePassword);
+        return  ResponseEntity.ok(s);
+    }
 
 }

@@ -33,7 +33,7 @@ const TourCard = ({ tour, index }) => {
             />
           ))}
 
-          <label className="form-label ps-2">5 sao</label>
+          <label className="form-label ps-2">{tour.rate} sao</label>
         </div>
         <div className="text-center text-info col-4">VND</div>
       </div>

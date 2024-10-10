@@ -3,6 +3,7 @@ package luan.datve.dulich.service.impl;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import jakarta.mail.MessagingException;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -10,10 +11,13 @@ import luan.datve.dulich.Jwt.JwtProvider;
 import luan.datve.dulich.dto.TourDto;
 import luan.datve.dulich.dto.UserDto;
 
+import luan.datve.dulich.dto.request.ChangePassword;
+import luan.datve.dulich.dto.request.ForgetPassword;
 import luan.datve.dulich.dto.request.LoginRequest;
 import luan.datve.dulich.dto.response.LoginResponse;
 import luan.datve.dulich.dto.response.LogoutResponse;
 import luan.datve.dulich.exception.ResourceNotExceptionFound;
+import luan.datve.dulich.mail.MailService;
 import luan.datve.dulich.mapper.MapperUserAndUserDto;
 import luan.datve.dulich.model.LogoutToken;
 import luan.datve.dulich.model.Tour;
@@ -26,10 +30,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,6 +42,7 @@ public class UserSerViceImpl implements UserService {
     PasswordEncoder passwordEncoder;
     JwtProvider jwtProvider;
     LogoutTokenRepository logoutTokenRepository;
+    MailService mailService;
 
     // add new user
     @Override
@@ -225,7 +227,58 @@ public class UserSerViceImpl implements UserService {
         return dtoPage;
     }
 
+    // change password
+    @Override
+    public String changePassword(ChangePassword changePassword) {
+        // 1: lay user theo username or email
+        User user = userRepository.findByUserNameOrEmail(changePassword.getUsernameOrEmail(),changePassword.getOldPassword());
+        // 2: check user == null
+        if(user == null) throw new ResourceNotExceptionFound("username or email not existed");
+        // 3: check password has match
+        if(!passwordEncoder.matches(changePassword.getOldPassword(),user.getPassword()))
+            throw new ResourceNotExceptionFound("mat khau cu khong dung ");
+        // 4: check new password match with reenter new password
+        if(!changePassword.getNewPassword().equals(changePassword.getReNewPassword()))
+            throw  new ResourceNotExceptionFound("mat khau moi ko khop voi map khau moi nhap lai");
+        // 5: encoder new password
+        String newPassword = passwordEncoder.encode(changePassword.getReNewPassword());
+        // 6: set new password encoder to object user
+        user.setPassword(newPassword);
+        // 7: update new password
+        User savedUser = userRepository.save(user);
 
+        return "update success new password for user";
+    }
+
+    // forgetPassword
+    @Override
+    public String forgetPassword(ForgetPassword forgetPassword) throws MessagingException {
+        // 1: get user by username or password
+        User user = userRepository.findByUserNameOrEmail(
+                forgetPassword.getUsernameOrEmail(),forgetPassword.getUsernameOrEmail());
+        // 2: check user has null
+        if(user == null)
+            throw new ResourceNotExceptionFound("Username or email given not existed");
+        // 3: create random password
+        String randomPw = String.valueOf(UUID.randomUUID());
+        System.out.println("mat khau moi : "+ randomPw);
+        // 4: encoder new password
+        String newPw = passwordEncoder.encode(randomPw);
+        // 6: set new password to user
+        user.setPassword(newPw);
+        // 7: saved to database
+        User savedUser = userRepository.save(user);
+        // 9: get email user
+        String email = savedUser.getEmail();
+        // 10: set subject mail
+        String subjectMail = "Mat Khau moi cua ban!";
+        // 11: set body
+        String body = "<h1>Ban da thay doi mat khau hien tai</h1>" +
+                "<p> Mat khau moi cua ban la: "+ randomPw+"</p>";
+        // 12: send email
+        mailService.sendMail(email,subjectMail,body);
+        return "change password success!";
+    }
 
 
 }

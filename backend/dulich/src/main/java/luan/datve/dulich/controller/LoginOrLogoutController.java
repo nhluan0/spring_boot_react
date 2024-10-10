@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import luan.datve.dulich.Jwt.JwtProvider;
+import luan.datve.dulich.dto.request.ChangePassword;
 import luan.datve.dulich.dto.request.LoginRequest;
 import luan.datve.dulich.dto.request.RegisterRequest;
 import luan.datve.dulich.dto.response.LogoutResponse;
@@ -130,5 +131,6 @@ public class LoginOrLogoutController {
         User userServed = userRepository.save(user);
         return ResponseEntity.ok("Đăng ký user thành công");
     }
+
 
 }

@@ -4,7 +4,7 @@ const PaginationUserItems = ({
   users,
   handelShowModalUpdate,
   handleLockOrUnLock,
-  setErrorSearch,
+  
 }) => {
   return (
     <>

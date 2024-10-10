@@ -4,6 +4,9 @@ import { jwtDecode } from 'jwt-decode'
 import { Link, useNavigate } from 'react-router-dom'
 import GlobalContext from '../../UseContext'
 import Header from '../home/Header'
+import { IoMdEye } from 'react-icons/io'
+import { IoIosEyeOff } from 'react-icons/io'
+
 let tokenGlobal = ''
 // Hàm để cập nhật giá trị của tokenGlobal
 export const setTokenGlobal = (newToken) => {
@@ -14,6 +17,7 @@ const Login = () => {
   const [password, setPassword] = useState('')
   const [messErr, setMessErr] = useState('')
   const navigator = useNavigate()
+  const [newPw, setNewPw] = useState(false)
 
   const { setToken, setUsername, setRole } = GlobalContext()
   const handleSubmitLogin = async (e) => {
@@ -69,6 +73,11 @@ const Login = () => {
         })
     }
   }
+  const handleHiddenShow = (type) => {
+    if (type == 'newPw') {
+      setNewPw(!newPw)
+    }
+  }
   return (
     <div className="container-lg bg-light">
       <div className="bg-info">
@@ -81,7 +90,7 @@ const Login = () => {
       >
         <div className="card col-lg-6 ">
           <div className="card-body">
-            <h3>Dang Nhap</h3>
+            <h3 className="text-center text-danger my-3">Dang Nhap</h3>
             {messErr && (
               <div className="alert text-danger alert-success">{messErr}</div>
             )}
@@ -100,15 +109,27 @@ const Login = () => {
               <label className="form-label" htmlFor="pw">
                 Password:
               </label>
-              <input
-                className="form-control"
-                id="pw"
-                type="password"
-                placeholder="Nhap password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              ></input>
-
+              <div className="position-relative">
+                <input
+                  className="form-control"
+                  id="pw"
+                  type={newPw ? 'text' : 'password'}
+                  placeholder="Nhap password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                ></input>
+                {newPw ? (
+                  <IoIosEyeOff
+                    className="cursor-icon position-absolute top-50 end-0 translate-middle mx-1"
+                    onClick={() => handleHiddenShow('newPw')}
+                  />
+                ) : (
+                  <IoMdEye
+                    className="cursor-icon position-absolute top-50 end-0 translate-middle mx-1"
+                    onClick={() => handleHiddenShow('newPw')}
+                  />
+                )}
+              </div>
               <button
                 className="btn btn-danger btn-block mt-2"
                 type="submit"
@@ -120,6 +141,10 @@ const Login = () => {
                 Home
               </Link>
             </form>
+            <div className="d-flex justify-content-between my-3">
+              <Link to="/log/password/forget">Forget password</Link>
+              <Link to="/log/password/change">Change password</Link>
+            </div>
           </div>
         </div>
       </div>

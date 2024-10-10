@@ -40,6 +40,7 @@ public class SecurityConfig {
     private String[] PUBLIC_GET ={"/tours/search/**","/tours","/tours/**","/tours/price-desc"
             ,"/tour/search/**","/tour/search/date/**","/booking/**","/comment/**",
             "/comment/tour/**","/log/complete/register","/users/**"};
+    private String[] PUBLIC_PUT={"/users/change/pw"};
     @Bean
     PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
@@ -65,7 +66,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(request ->
                 request.requestMatchers(HttpMethod.POST,PUBLIC_POST).permitAll()
                         .requestMatchers(HttpMethod.GET,PUBLIC_GET).permitAll()
-
+                        .requestMatchers(HttpMethod.PUT,PUBLIC_PUT).permitAll()
                         .anyRequest().authenticated()
 
         );

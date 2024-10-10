@@ -210,3 +210,9 @@ select:focus {
 .page-link.active {
   z-index: 0 !important;
 }
+.cursor-icon {
+  cursor: pointer;
+}
+.cursor-icon:hover {
+  opacity: 0.5;
+}

@@ -44,3 +44,6 @@ export const apiGetListUserByNumPagePaginate = (page) =>
 // api get user theo gia tri search va phan trang
 export const apiSearchByUsernameOrPhoneNumberv2 = (page, search) =>
   axios.post(`${URL_BASE}/search/${page}`, search)
+// api change password
+export const apiChangePassword = (user) =>
+  axios.put(`${URL_BASE}/change/pw`, user)

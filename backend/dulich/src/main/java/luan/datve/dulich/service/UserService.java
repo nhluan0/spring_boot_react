@@ -1,8 +1,11 @@
 package luan.datve.dulich.service;
 
 import com.nimbusds.jose.JOSEException;
+import jakarta.mail.MessagingException;
 import luan.datve.dulich.dto.TourDto;
 import luan.datve.dulich.dto.UserDto;
+import luan.datve.dulich.dto.request.ChangePassword;
+import luan.datve.dulich.dto.request.ForgetPassword;
 import luan.datve.dulich.dto.request.LoginRequest;
 import luan.datve.dulich.dto.response.LoginResponse;
 import luan.datve.dulich.dto.response.LogoutResponse;
@@ -51,4 +54,8 @@ public interface UserService {
     Page<UserDto> getListUserByNumPage(int numPage);
     // search username or phone number de phan trang
     Page<UserDto> searchUsernameOrPhoneNumber(int page,String username, String phoneNumber);
+    // change password
+    String changePassword(ChangePassword changePassword);
+    // forget password
+    String forgetPassword(ForgetPassword forgetPassword) throws MessagingException;
 }
